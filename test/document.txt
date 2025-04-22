@@ -1,0 +1,4 @@
+Como executar?
+    terminal: npx vitest 
+    package.json
+    "test": "vitest" rode com npm test
