@@ -4,24 +4,10 @@ import { userRoutes } from './modules/shared/Usuario/user-routes.js'
 
 const inProduction = process.env.NODE_ENV === 'production'
 
-export const app = fastify({
-	logger: !inProduction
-		? {
-				level: 'debug',
-				transport: {
-					target: 'pino-pretty',
-					options: {
-						colorize: true,
-						translateTime: 'HH:MM:ss',
-						ignore: 'pid,hostname'
-					}
-				}
-			}
-		: false // remove em produção
-})
+export const app = fastify()
 
 
-app.register(userRoutes, { prefix: 'columns' })
+app.register(userRoutes, { prefix: 'users' })
 
 app.get('/', () => {
 	return '🟢 Server running!'
