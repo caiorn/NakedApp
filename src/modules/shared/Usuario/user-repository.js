@@ -4,11 +4,14 @@ export class UserRepository {
 	}
   
 	async create(user) {
-	  const [result] = await this.conn.execute(
+		cons
+
+
+		const [result] = await this.conn.execute(
 		'INSERT INTO users (name, email) VALUES (?, ?)',
 		[user.name, user.email]
-	  );
-	  return result.insertId;
+		);
+		return result.insertId;
 	}
   
 	async findById(id) {

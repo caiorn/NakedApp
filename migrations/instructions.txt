@@ -1,0 +1,16 @@
+Examples: npx knex -h
+
+
+Create a named migration file.
+npx knex migrate:make createUser
+
+Run all migrations that have not yet been run.
+npx knex migrate:latest
+
+Rollback the last batch of migrations performed.
+npx knex migrate:rollback
+
+
+Comments:
+    O nome da migration precisa simbolizar qual alteração será feita no banco de dado
+
