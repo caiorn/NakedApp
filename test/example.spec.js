@@ -1,7 +1,9 @@
 import request from 'supertest'
 import { createServer } from 'node:http'
+import { execSync } from 'node:child_process'
 import { afterAll, beforeAll, expect, test, describe } from 'vitest'
 import { app } from '../src/app.js'
+import { beforeEach } from 'node:test'
 
 //configurar knex e rodar migrations
 
@@ -13,6 +15,12 @@ describe('Users routes', () => {
 
 	afterAll(async () => await app.close())
 
+	 beforeEach(async () => {
+		//a cada teste que for executado, o banco de dados deve estar limpo
+		execSync('npm run knex:migrate:rollback -all') //desfaz as migrations
+	 	execSync('npm run knex migrate:latest') //executa as migrations
+	// 	// await app.db.seed.run() //executa os seeds
+	 })
 	// test0('get http', async () => {
 	// 	//await
 	// })
