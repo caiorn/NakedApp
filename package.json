@@ -3,6 +3,9 @@
 	"version": "1.0.0",
 	"description": "",
 	"main": "index.js",
+	"engines": {
+		"node": ">=18.0.0"
+	},
 	"scripts": {
 		"dev": "cross-env NODE_ENV=development node --watch src/server.js",
 		"prod": "cross-env NODE_ENV=production node --watch src/server.js",

@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+      "target": "ESNext",
+      "module": "NodeNext",
+      "moduleResolution": "nodenext", // Para resolução de módulos no Node.js
+      "checkJs": true,           // Verificar erros de tipo no JavaScript
+      "baseUrl": "./",           // Base para resolver os caminhos dos arquivos
+      "paths": {
+        "@/*": ["src/*"]         // Para alias de diretórios (opcional)
+      }
+    },
+    "include": ["src/**/*.js"],   // Onde o VSCode deve procurar os arquivos
+    "exclude": ["node_modules"]   // Excluir diretórios não relevantes
+  }
+  

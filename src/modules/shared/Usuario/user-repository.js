@@ -1,27 +1,32 @@
 import { knex } from "../../../db/knex-db.js";
 
-export async function createUser(user, trxKnex) {
-	return await trxKnex('users').insert(user).returning('id');
-}
+export class UserRepository {
 
-export async function getAllUsers(trxKnex) {
-	const db = trxKnex || knex;
-	const users = await db('users').select('*') //.whereNull('deleted_at');
-	return users;	
-}
+	constructor(trxKnex) {
+		this.trxKnex = trxKnex || knex;
+	}
 
+	async createUser(user) {
+		return await this.trxKnex('users').insert(user).returning('id');
+	}
 
-export async function getUserById(id, trxKnex) {
-	const db = trxKnex || knex;
-	return await db('users')
-		.where({ id })
-		.first();
-}
+	async getAllUsers() {
+		const users = await this.trxKnex('users').select('*'); //.whereNull('deleted_at');
+		return users;	
+	}
 
-export async function updateUser(id, userData, trxKnex) {
-	const db = trxKnex || knex;
-	return await db('users')
-		.where({ id })
-		.update(userData)
-		.returning('*');
+	async getUserById(id) {
+		return await this.trxKnex('users')
+			.where({ id })
+			.first();
+	}
+
+	async updateUser(id, userData) {
+		return await this.trxKnex('users')
+			.where({ id })
+			.update(userData)
+			.returning('*');
+	}
 }
+	
+
