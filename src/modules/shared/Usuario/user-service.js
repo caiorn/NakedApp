@@ -9,9 +9,9 @@ export class UserService {
 	}
 
 	async createUser(userData) {
-    // const newUser = { ...userData }; // Cria uma cópia do objeto userData
+		// const newUser = { ...userData }; // Cria uma cópia do objeto userData
 
-		//verificar ja existe usuario com esta matricula ou cpf      
+		//verificar ja existe usuario com esta matricula ou cpf
 		const existingUser = await this.userRepository.getUserBy_CPF_or_Matricula(
 			userData.matricula,
 			userData.cpf,
@@ -23,11 +23,11 @@ export class UserService {
 			throw new AppError("User with this CPF already exists", 409);
 		}
 
-    //gerando hash da senha
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(userData.senha, salt);
-    // Criar novo objeto com a senha alterada
-    const newUser = {  ...userData,  senha: hashedPassword} //copia para não refletir no objeto original
+		//gerando hash da senha
+		const salt = await bcrypt.genSalt(10);
+		const hashedPassword = await bcrypt.hash(userData.senha, salt);
+		// Criar novo objeto com a senha alterada
+		const newUser = { ...userData, senha: hashedPassword }; //copia para não refletir no objeto original
 		const userId = await this.userRepository.createUser(newUser);
 		return { userId: userId };
 	}

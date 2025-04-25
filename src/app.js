@@ -2,6 +2,7 @@ import fastify from 'fastify'
 import { userRoutes } from './modules/shared/Usuario/user-routes.js'
 import { ZodError } from 'zod'
 import { AppError } from './errors/AppError.js'
+import { authRoutes } from './modules/shared/Usuario/Authenticate/auth-routes.js'
 // import { userSQLiteRoutes } from './modules/userSQLite/user-routes.js'
 
 const inProduction = process.env.NODE_ENV === 'production'
@@ -47,13 +48,13 @@ app.setErrorHandler((error, _request, reply) => {
 	} else {
 	  // TODO: logar erro em serviço externo (Sentry, etc)
 	}
-  
-	return reply.status(statusCode).send(payload);
+	return reply.status(statusCode).send({ statusCode, ...payload });
   });
   
 
 
 app.register(userRoutes, { prefix: 'users' })
+app.register(authRoutes, { prefix: 'auth'})
 
 app.get('/', () => {
 	return '🟢 Server running!'

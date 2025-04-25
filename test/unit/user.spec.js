@@ -1,8 +1,9 @@
-import { vitest , test, expect} from "vitest";
+import { vitest , test, expect, describe} from "vitest";
 import { InMemoryUserRepository } from "../../src/modules/shared/Usuario/user-repository-in-memory.js";
 import { UserService } from "../../src/modules/shared/Usuario/user-service.js";
 import { compare } from "bcryptjs";
 import { AppError, AppError2 } from "../../src/errors/AppError.js";
+
 
 test("verificando criptografia", async () => {
   const userRepository = new InMemoryUserRepository();  
@@ -16,7 +17,7 @@ test("verificando criptografia", async () => {
     api_access: 0,
   };
   const { userId } = await userService.createUser(userData);
-  const user = await userRepository.getUserById(userId);
+  const user = await userService.getUserById(userId);
   console.log(user);
   const isPasswordValid = await compare(userData.senha, user.senha);
   expect(isPasswordValid).toBe(true);

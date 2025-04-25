@@ -33,7 +33,7 @@ export const getAllUsers = async (request, reply) => {
 	if (!users || users.length === 0) {
 		throw new AppError("No users found", 404);
 	}
-
+	
 	reply.code(200).send(users);
 };
 

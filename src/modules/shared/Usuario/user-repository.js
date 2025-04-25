@@ -26,6 +26,10 @@ export class UserRepository {
 			.first();
 	}
 
+	async getUserByCPF(cpf) {
+		return await this.trxKnex("users").where({ cpf }).first();
+	}
+
 	async updateUser(id, userData) {
 		return await this.trxKnex("users")
 			.where({ id })

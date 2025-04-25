@@ -18,6 +18,11 @@ export class InMemoryUserRepository {
         return user;
     }
 
+    async getUserByCPF(cpf) {
+        const user = this.users.find(user => user.cpf === cpf);
+        return user;
+    }
+
     async getUserBy_CPF_or_Matricula(matricula, cpf) {
         return this.users.find(user => user.matricula === matricula || user.cpf === cpf) || null;
     }
