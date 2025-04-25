@@ -27,3 +27,5 @@ dist-ssr
 .env*
 # Mas mantém o exemplo
 !.env.example
+
+coverage

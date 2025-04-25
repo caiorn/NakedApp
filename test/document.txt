@@ -1,4 +1,5 @@
 Como executar?
+    vitest pega por padrão as variaveis de .env.test
     terminal: npx vitest 
     package.json
     "test": "vitest" rode com npm test

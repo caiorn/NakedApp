@@ -1,7 +1,7 @@
 import { config } from 'dotenv'
 import { z } from 'zod'
-import { resolve } from 'path'
-import { existsSync } from 'fs'
+import { resolve } from 'node:path'
+import { existsSync } from 'node:fs'
 
 // Carrega o .env baseado no NODE_ENV
 const envFile = `.env.${process.env.NODE_ENV || 'development'}`
@@ -26,9 +26,8 @@ const envSchema = z.object({
   DB_PORT: z.coerce.number().optional().default(3306),
   DB_PASS: z.string().optional(),
   DB_NAME: z.string().optional(),
-
+  DB_TIMEOUT: z.coerce.number().optional().default(15000),
   SQLITE_DB_PATH: z.string().optional(),
-  DATABASE_URL: z.string().default('sqlite://db.sqlite'),
 })
 
 // Valida e faz parse

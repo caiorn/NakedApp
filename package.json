@@ -12,7 +12,9 @@
 		"test": "cross-env NODE_ENV=test node --watch src/server.js",
 		"pm2prod": "cross-env NODE_ENV=development node --watch src/server.js",
 		"vitest": "npx vitest run",
-		"test:watch": "npx vitest"
+		"test:watch": "npx vitest",
+		"test:coverage": "npx vitest run --coverage",
+		"test:ui": "npx vitest --ui"
 	},
 	"keywords": [],
 	"author": "",
@@ -20,6 +22,8 @@
 	"type": "module",
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
+		"@vitest/coverage-v8": "^3.1.2",
+		"@vitest/ui": "^3.1.2",
 		"cross-env": "^7.0.3",
 		"pino-pretty": "^13.0.0",
 		"supertest": "^7.1.0",
