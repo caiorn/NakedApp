@@ -1,8 +1,7 @@
 import { userSchema } from "./user2.schema.js";
-import { UserService } from "./user-service.js";
-import { UserRepository } from "./user-repository.js";
 import { knex } from "../../../db/knex-db.js";
 import { AppError } from "../../../errors/AppError.js";
+import { makeUserService } from "./user-service-factory.js";
 
 export const createUser = async (request, reply) => {
   // validação de entrada de dados JSON se inválido, throw ZodError
@@ -10,8 +9,7 @@ export const createUser = async (request, reply) => {
 
   const knexTransaction = await knex.transaction(); 
   try {
-		const userRepository = new UserRepository(knexTransaction);
-		const userService = new UserService(userRepository);
+		const userService = makeUserService(knexTransaction);
 
 		const user = await userService.createUser(validatedUser);
 		await knexTransaction.commit();
@@ -25,8 +23,7 @@ export const createUser = async (request, reply) => {
 export const getAllUsers = async (request, reply) => {
 	// usar a mesma transação para todas operacoes dentro do mesmo endpoint
 	const knexTransaction = await knex.transaction();
-	const userRepository = new UserRepository(knexTransaction);
-	const userService = new UserService(userRepository);
+	const userService = makeUserService(knexTransaction);
 
 	await knexTransaction.commit;
 	const users = await userService.getAllUsers();
@@ -38,7 +35,7 @@ export const getAllUsers = async (request, reply) => {
 };
 
 export const getUserById = async (request, reply) => {
-	const userService = new UserService(new UserRepository());
+	const userService = makeUserService();
 
 	const { id } = request.params;
 		const user = await userService.getUserById(id);
