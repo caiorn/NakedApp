@@ -1,13 +1,22 @@
 import fastify from 'fastify'
-import { userRoutes } from './modules/shared/Usuario/user-routes.js'
+import fastifyJwt from '@fastify/jwt'
 import { ZodError } from 'zod'
 import { AppError } from './errors/AppError.js'
-import { authRoutes } from './modules/shared/Usuario/Authenticate/auth-routes.js'
+import { env } from './env.js'
+import { appRoutes } from './routes.js'
 // import { userSQLiteRoutes } from './modules/userSQLite/user-routes.js'
 
 const inProduction = process.env.NODE_ENV === 'production'
 
 export const app = fastify()
+app.register(fastifyJwt, {
+	secret: env.JWT_SECRET,
+	sign: {
+		expiresIn: env.JWT_EXPIRATION
+	  }
+});
+
+
 app.setErrorHandler((error, _request, reply) => {
 	let statusCode = 500;
 	let payload = {
@@ -52,9 +61,7 @@ app.setErrorHandler((error, _request, reply) => {
   });
   
 
-
-app.register(userRoutes, { prefix: 'users' })
-app.register(authRoutes, { prefix: 'auth'})
+app.register(appRoutes, { prefix: '/api' })
 
 app.get('/', () => {
 	return '🟢 Server running!'

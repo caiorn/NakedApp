@@ -1,5 +1,3 @@
-import {FastifyReply, FastifyRequest} from 'fastify'
-
 export async function checkSessionIsExists(request, reply) {
 	const sessionId = request.cookies.sessionId
 

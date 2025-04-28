@@ -19,6 +19,37 @@ export const createUser = async (request, reply) => {
 	}
 };
 
+export const updateUser = async (request, reply) => {
+	// const { id } = request.params;
+	// const validatedUser = userSchema.parse(request.body);
+
+	// const knexTransaction = await knex.transaction(); 
+	// try {
+	// 	const userService = makeUserService(knexTransaction);
+	// 	const user = await userService.updateUser(id, validatedUser);
+	// 	await knexTransaction.commit();
+	// 	reply.code(200).send(user);
+	// } catch (error) {
+	// 	await knexTransaction.rollback();
+	// throw error;
+	// }
+};
+
+
+export const deleteUser = async (request, reply) => {
+	// const { id } = request.params;
+	// const knexTransaction = await knex.transaction(); 
+	// try {
+	// 	const userService = makeUserService(knexTransaction);
+	// 	await userService.deleteUser(id);
+	// 	await knexTransaction.commit();
+	// 	reply.code(204).send();
+	// } catch (error) {
+	// 	await knexTransaction.rollback();
+	// 	throw error;
+	// }
+};
+
 export const getAllUsers = async (request, reply) => {
 	// usar a mesma transação para todas operacoes dentro do mesmo endpoint
 	const knexTransaction = await knex.transaction();

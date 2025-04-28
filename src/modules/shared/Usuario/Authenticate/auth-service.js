@@ -27,6 +27,29 @@ export class AuthService {
         return { user };
 	}
 
+	async changePassword(userId, newPassword) {
+		// const user = await this.userRepository.getUserById(userId);
+		// if (!user) {
+		// 	throw new AppError("User not found", 404);
+		// }
+
+		// const hashedPassword = await bcrypt.hash(newPassword, 8);
+		// await this.userRepository.updateUserPassword(userId, hashedPassword);
+		// return { message: "Password changed successfully" };
+	}
+
+	async resetPassword(userId, newPassword) {
+		// const user = await this.userRepository.getUserById(userId);
+		// if (!user) {
+		// 	throw new AppError("User not found", 404);
+		// }
+
+		// const hashedPassword = await bcrypt.hash(newPassword, 8);
+		// await this.userRepository.updateUserPassword(userId, hashedPassword);
+		// return { message: "Password reset successfully" };
+	}
+
+
 	setToken(token) {
 		this.token = token;
 	}

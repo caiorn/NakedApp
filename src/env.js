@@ -27,6 +27,10 @@ const envSchema = z.object({
   DB_PASS: z.string().optional(),
   DB_NAME: z.string().optional(),
   DB_TIMEOUT: z.coerce.number().optional().default(15000),
+
+  JWT_SECRET: z.string(),
+  JWT_EXPIRATION: z.string().default('1d'),
+
   SQLITE_DB_PATH: z.string().optional(),
 })
 
