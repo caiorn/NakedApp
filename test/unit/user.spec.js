@@ -23,8 +23,7 @@ describe("Usuário", () => {
       api_access: 0,
     };
     const { userId } = await sut.createUser(userData);
-    const user = await sut.getUserById(userId);
-    console.log(user);
+    const { user } = await sut.getUserById(userId);
     const isPasswordValid = await compare(userData.senha, user.senha);
     expect(isPasswordValid).toBe(true);
     expect(user.id).toEqual(expect.any(Number));
@@ -38,12 +37,11 @@ describe("Usuário", () => {
       senha: "password123",
       isFirstAccess: 1,
       api_access: 0,
-    };  
+    };
     try {
       await sut.createUser(userData)
       await sut.createUser(userData)
     } catch (error) {
-      console.log(error.constructor.name)
       expect(error).toBeInstanceOf(AppError) // Error tb passaria porque é superclasse de AppError
       expect(error.statusCode).toBe(409)
       expect(error.constructor.name).toBe('AppError') 

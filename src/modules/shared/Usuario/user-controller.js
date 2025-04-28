@@ -1,4 +1,4 @@
-import { userSchema } from "./user2.schema.js";
+import { userSchema } from "./user.schema.js";
 import { knex } from "../../../db/knex-db.js";
 import { AppError } from "../../../errors/AppError.js";
 import { makeUserService } from "./user-service-factory.js";
@@ -10,7 +10,6 @@ export const createUser = async (request, reply) => {
   const knexTransaction = await knex.transaction(); 
   try {
 		const userService = makeUserService(knexTransaction);
-
 		const user = await userService.createUser(validatedUser);
 		await knexTransaction.commit();
 		reply.code(201).send(user);

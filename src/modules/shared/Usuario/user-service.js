@@ -1,17 +1,24 @@
 import { AppError } from "../../../errors/AppError.js";
 import { UserRepository } from "./user-repository.js";
+import { userSchema } from "./user.schema.js";
 import bcrypt from "bcryptjs";
 
+/**
+ * @typedef {import('zod').infer<typeof userSchema>} User
+ */
 export class UserService {
 	constructor(userRepository) {
 		/** @type {UserRepository} */
 		this.userRepository = userRepository;
 	}
 
+	/**
+	 * @param {User} userData
+	 */
 	async createUser(userData) {
 		// const newUser = { ...userData }; // Cria uma cópia do objeto userData
-
-		//verificar ja existe usuario com esta matricula ou cpf
+		
+		//verificar ja existe usuario com esta matricula ou cpf		
 		const existingUser = await this.userRepository.getUserBy_CPF_or_Matricula(
 			userData.matricula,
 			userData.cpf,

@@ -8,4 +8,9 @@ export const userSchema = z.object({
     senha: z.string().min(6, { message: 'Password must be at least 6 characters long' }),
     isFirstAccess: z.number().default(1),
     api_access: z.number().default(1), //não pe obrigatório, mas se não for passado, assume 1
+    // email: z
+    // .string()
+    // .email({ message: 'Invalid email format' })
+    // .optional()
+    // .transform((val) => (val === '' || val === undefined ? null : val)),
 }).strict();  //strict Garante que o objeto não tenha atributos extras

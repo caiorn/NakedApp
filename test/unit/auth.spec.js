@@ -1,12 +1,10 @@
 import { it, expect, describe} from "vitest";
 import { InMemoryUserRepository } from "../../src/modules/shared/Usuario/user-repository-in-memory.js";
 import { AuthService } from "../../src/modules/shared/Usuario/Authenticate/auth-service.js";
-import { compare, hash } from "bcryptjs";
-import { AppError } from "../../src/errors/AppError.js";
 import  bcrypt from "bcryptjs";
 
 describe('Autenticação', () => {
-    it("autenticação usuário", async () => {
+    it("deve autenticação usuário com cpf e senha", async () => {
         const userRepository = new InMemoryUserRepository();  
         const sut = new AuthService(userRepository);
       
@@ -14,7 +12,7 @@ describe('Autenticação', () => {
           cpf: "12345678900",
           senha: await bcrypt.hash("password123", 10),
           status: "active",
-        })
+        }) 
       
         const {user} = await sut.authenticate('12345678900', 'password123');
       
