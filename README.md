@@ -1,6 +1,6 @@
 # 📡 Padrão de Retorno da API
 
-Esta API utiliza um formato **padronizado** para todas as respostas HTTP, facilitando o consumo no front-end e padronizando o tratamento de erros e mensagens.
+Esta API segue os princípios RESTful e utiliza um formato padronizado, inspirado no padrão RFC 7807, para todas as respostas HTTP — incluindo sucessos e erros. Isso facilita o consumo no front-end e padroniza o tratamento de respostas, proporcionando maior previsibilidade e consistência.
 
 ---
 
@@ -11,11 +11,11 @@ Esta API utiliza um formato **padronizado** para todas as respostas HTTP, facili
   "success": true,
   "message": "Usuário criado com sucesso",
   "data": {
-    // Conteúdo real solicitado (ex: dados do usuário, lista de registros, etc.)
+    "Conteúdo real solicitado (ex: dados do usuário, lista de registros, etc.)"
   },
   "meta": {
-    "timestamp": "2025-05-07T21:24:04.522663Z"
-    // Outros dados adicionais, caso necessário (paginação, filtros, contexto de debug, etc.)
+    "timestamp": "2025-05-07T21:24:04.522663Z",
+    "Outros dados adicionais, caso necessário (paginação, filtros, contexto de debug, etc.)"
   }
 }
 ```
@@ -32,7 +32,6 @@ Esta API utiliza um formato **padronizado** para todas as respostas HTTP, facili
   "message": "No Authorization",
   "path": "/api/users/4",
   "timestamp": "2025-05-07T21:24:04.522670Z",
-  "issues": []
 }
 ```
 
