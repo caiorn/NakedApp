@@ -4,21 +4,21 @@ import { resolve } from 'node:path'
 import { existsSync } from 'node:fs'
 
 // Carrega o .env baseado no NODE_ENV
-const envFile = `.env.${process.env.NODE_ENV || 'development'}`
+const envFile = `.env.${process.env.NODE_ENV}`
 const envPath = resolve(process.cwd(), envFile)
 
 if (existsSync(envPath)) {
   config({ path: envPath })
 } else {
-  console.warn(`⚠️ Arquivo "${envFile}" não encontrado. Usando variáveis padrão ou .env`)
+  console.warn(`⚠️  Arquivo "${envFile}" não encontrado. Usando variáveis padrão ou .env`)
   config()
 }
 
 // Validação com Zod
 const envSchema = z.object({
-  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  NODE_ENV: z.enum(['test', 'development' , 'production']),
   HOST: z.string().default('localhost'),
-  PORT: z.coerce.number().default(3333),
+  PORT: z.coerce.number(),
 
   DB_URL: z.string().optional(),
   DB_HOST: z.string().optional(),
@@ -46,6 +46,6 @@ if (!parsed.success) {
 export const env = parsed.data
 
 // 🖨️ Exibe variáveis no dev
-if (env.NODE_ENV === 'development') {
+// if (env.NODE_ENV === 'development') {
   console.log('Variáveis de ambiente carregadas:', env)
-}
+// }
