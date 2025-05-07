@@ -1,3 +1,4 @@
+import { AppError } from "../errors/AppError.js"
 
 
 export async function verifyJWT(request, reply) {
@@ -12,9 +13,6 @@ export async function verifyJWT(request, reply) {
     try {
         await request.jwtVerify()
     } catch (err) {
-        return reply.code(401).send({
-            error: 'Unauthorized.',
-            message: err.message,
-        });
+        throw new AppError("No Authorization", 401)
     }
 }

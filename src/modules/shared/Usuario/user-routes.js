@@ -1,5 +1,6 @@
 import * as userController from './user-controller.js'
 import { knex } from '../../../db/knex-db.js'
+import { verifyJWT } from '../../../middlewares/verify-jwt.js';
 
 export const userRoutes = async (fastify) => {
 
@@ -14,9 +15,14 @@ export const userRoutes = async (fastify) => {
 	});
 
 
-	fastify.get('/teste', {preHandler: [()=>console.log("middleware chamado")]}, async () => {
-		return { status: 'ok' };
-	});
+	fastify.get('/teste', {
+		preHandler: [
+			() => console.log("1º middleware chamado"),
+			() => console.log("2º middleware chamado")]
+		},
+		async () => {
+			return { status: 'ok' };
+		});
 
 	// Rota para buscar todos os usuários
 	fastify.get('/', async () => {
@@ -24,13 +30,13 @@ export const userRoutes = async (fastify) => {
 		return users;
 	});
 
-	fastify.get('/all', userController.getAllUsers)
+	fastify.get('/all', { preHandler: verifyJWT }, userController.getAllUsers)
 
 	// Rota para buscar usuário por ID
-	fastify.get('/:id', userController.getUserById)
+	fastify.get('/:id', { preHandler: verifyJWT }, userController.getUserById)
 
 	// // Rota para criar um novo usuário
-	 fastify.post('/', userController.createUser)
+	fastify.post('/', userController.createUser)
 
 	// // Rota para atualizar usuário existente
 	// fastify.put('/:id', userController.updateUserController)

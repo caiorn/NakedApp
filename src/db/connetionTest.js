@@ -5,8 +5,9 @@ export const test = {
     ConnectionMySQL2: async () => {
         try {
             const connection = await pool.getConnection()
-            await connection.query('SELECT 1')
-            console.info('🟢 Conexão MySQL2 estabelecida com sucesso!')
+            const [rows] = await connection.query('SELECT DATABASE() AS db')
+            const dbName = rows[0]?.db || '(desconhecido)'
+            console.info(`🟢 Conexão MySQL2 estabelecida com sucesso! Banco: ${dbName}`)
             connection.release()
         } catch (error) {
             console.error('🔴 Erro ao conectar ao MySQL2:', error)
@@ -15,13 +16,11 @@ export const test = {
 
     ConnectionKnex: async () => {
         try {
-            console.time('🟢 Conexão Knex estabelecida com sucesso!');
-            await knex.raw('SELECT 1')
-            console.timeEnd('🟢 Conexão Knex estabelecida com sucesso!');
+            const result = await knex.raw('SELECT DATABASE() AS db')
+            const dbName = result[0][0]?.db || '(desconhecido)'
+            console.info(`🟢 Conexão Knex estabelecida com sucesso! Banco: ${dbName}`)
         } catch (error) {
-            console.error('🔴 Erro ao conectarc ao Knex:', error)
+            console.error('🔴 Erro ao conectar ao Knex:', error)
         }
     }
-
 }
-

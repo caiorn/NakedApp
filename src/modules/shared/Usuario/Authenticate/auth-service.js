@@ -12,16 +12,16 @@ export class AuthService {
 	async authenticate(cpf, password) {
 		const user = await this.userRepository.getUserByCPF(cpf);
 		if (!user) {
-			throw new AppError("User not found 2", 401);
+			throw new AppError("Usúario não encontrado", 401);
 		}
 
 		const isPasswordValid = await bcrypt.compare(password, user.senha);
 		if (!isPasswordValid) {
-			throw new AppError("Invalid password", 409);
+			throw new AppError("Senha Inválida", 401);
 		}
 
 		if (user.status !== "active") {
-			throw new AppError("User is not active", 401);
+			throw new AppError("Usuário inativo. Contate o seu supervisor.", 403);
 		}
 
         return { user };

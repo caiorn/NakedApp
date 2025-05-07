@@ -5,10 +5,8 @@ import { verifyJWT } from './middlewares/verify-jwt.js'
 
 export async function appRoutes(fastify, options) {
     fastify.get('/', async (request, reply) => {
-        return '🟢 Server running!'
+        return '🟢 API running2!'
     })
-
-
     fastify.register(userRoutes, { prefix: '/users' })
     fastify.register(authRoutes, { prefix: '/auth' });
     fastify.register(profileRoutes, { prefix: '/profile' });
