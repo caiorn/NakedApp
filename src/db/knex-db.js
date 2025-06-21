@@ -2,10 +2,28 @@ import knexConfig from 'knex';
 import { env } from '../env.js';
 
 export const config = {
-  client: 'mysql2',
-  connection: env.DB_URL,
-  pool: { min: 0, max: 10 },
-  migrations: {}
-}
+  client: 'better-sqlite3',
+  connection: {
+    filename: env.DB_URL,
+  },
+  useNullAsDefault: true,
+  migrations: {
+    tableName: 'migrations',
+    directory: './migrations'
+  },
+  seeds: {
+    directory: './seeds'
+  },
+};
 
 export const knex = knexConfig(config);
+
+// Exemplo de interceptor: log de todas as queries
+knex.on('query', (query) => {
+  console.debug('> SQL:', query.sql, query.bindings || '');
+});
+
+// Interceptor de erro
+knex.on('query-error', (error, obj) => {
+  console.error('! SQL Error:', error, obj.sql);
+});
