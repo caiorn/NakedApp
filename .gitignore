@@ -24,7 +24,7 @@ dist-ssr
 *.sw?
 
 # Ignora qualquer arquivo que comece com .env (inclusive .env, .env.development, etc)
-.env*
+#.env*
 # Mas mantém o exemplo
 !.env.example
 

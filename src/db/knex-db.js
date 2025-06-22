@@ -8,7 +8,7 @@ export const config = {
   },
   useNullAsDefault: true,
   migrations: {
-    tableName: 'migrations',
+    tableName: '_sys_migrations',
     directory: './migrations'
   },
   seeds: {
