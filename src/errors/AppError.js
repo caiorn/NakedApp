@@ -7,7 +7,7 @@
 */
 
 export class AppError extends Error {
-	constructor(message, statusCode = 422) {
+	constructor(statusCode = 422, message = 'An error occurred' ) {
 		super(message)
 		this.statusCode = statusCode
 		Error.captureStackTrace?.(this, this.constructor)

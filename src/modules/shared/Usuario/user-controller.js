@@ -8,21 +8,20 @@ export const createUser = async (request, reply) => {
 	// validação de entrada de dados JSON se inválido, throw ZodError
 	const validatedUser = userSchema.safeParse(request.body);
 	if(!validatedUser.success){
-		throw new ValidationError("Não foi possivel criar o usúario, há campos inválidos.", 400, validatedUser)
+		throw new ValidationError(400, "Não foi possivel criar o usúario, há campos inválidos.", validatedUser)
 	}
 
-	const knexTransaction = await knex.transaction();
-	try {
+	await knex.transaction(async (knexTransaction) => {
 		const userService = makeUserService(knexTransaction);
 		const user = await userService.createUser(validatedUser.data);
-		await knexTransaction.commit();
 		reply.code(201).send(user);
-	} catch (error) {
-		console.log("ERRROUUU")
-		await knexTransaction.rollback();
-		throw error;
-	}
+	});
 };
+
+export const setUserAvatar = async (request, reply) => {
+	const { id } = request.params;
+    
+}
 
 export const updateUser = async (request, reply) => {
 	// const { id } = request.params;
@@ -63,7 +62,7 @@ export const getAllUsers = async (request, reply) => {
 	await knexTransaction.commit;
 	const users = await userService.getAllUsers();
 	if (!users || users.length === 0) {
-		throw new AppError("No users found", 404);
+		throw new AppError(404, "No users found");
 	}
 
 	reply.code(200).send(users);

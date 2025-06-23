@@ -8,15 +8,16 @@ export function errorHandler(error, request, reply) {
         const errorResponse = {
             success : false,
             status: error.statusCode || 500,
-            error: error.constructor.name,
             message: error.message || 'Internal Server Error',
-            path: request.url,
-            timestamp: new Date().toISOString(),
+            error: error.constructor.name
         }
 
         if (error instanceof ValidationError && error.issues) {
             errorResponse.issues = error.issues
         }
+
+        errorResponse.path = request.url;
+        errorResponse.timestamp = new Date().toISOString();
 
         //se for um erro nao identificado/bug
         if (error.constructor === Error) {

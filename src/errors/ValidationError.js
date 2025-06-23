@@ -1,7 +1,7 @@
 import { ZodError } from 'zod';
 
 export class ValidationError extends Error {
-	constructor(message, statusCode = 400, source) {
+	constructor(statusCode, message, source) {
 		super(message);
 		this.statusCode = statusCode;
 
@@ -10,8 +10,8 @@ export class ValidationError extends Error {
 
 		if (zodError) {
 			this.issues = zodError.issues.map(issue => ({
-				campo: issue.path.join('.'),
-				mensagem: issue.message,
+				field: issue.path.join('.'),
+				message: issue.message,
 			}));
 		} else if (Array.isArray(source)) {
 			this.issues = source; // lista de issues manual

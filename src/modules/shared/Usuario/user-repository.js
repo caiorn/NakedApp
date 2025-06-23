@@ -51,7 +51,7 @@ export class UserRepository {
 	}
 
 	async getUserByLogin({login, columns = ["*"]}) {
-		const users = await this.trxKnex("users").where({ login }).first();
+		const users = await this.trxKnex("users").select(columns).where({ login }).first();
 		return users; // Return the user object or undefined if not found
 	}
 

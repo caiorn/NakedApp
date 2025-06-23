@@ -13,6 +13,6 @@ export async function verifyJWT(request, reply) {
     try {
         await request.jwtVerify()
     } catch (err) {
-        throw new AppError("No Authorization", 401)
+        throw new AppError(401, "No Authorization")
     }
 }

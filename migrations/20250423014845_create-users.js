@@ -11,6 +11,7 @@ export async function up(knex) {
     table.string('password', 60).notNullable();
     table.string('avatar', 255);
     table.string('phone', 30); // Campo opcional
+    table.enum('status', ['active', 'inactive', 'blocked']).defaultTo('active'); // Status do usuário
     table.timestamp('created_at').notNullable().defaultTo(knex.fn.now()); // Auditoria SOX
     table.integer('created_by').references('id').inTable('users').onDelete('SET NULL').onUpdate('CASCADE');
     table.timestamp('updated_at');

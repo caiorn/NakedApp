@@ -9,22 +9,28 @@ export class AuthService {
 		this.token = null;
 	}
 
-	async authenticate(cpf, password) {
-		const user = await this.userRepository.getUserByCPF(cpf);
+	async authenticate({ login, password }) {
+		const user = await this.userRepository.getUserByLogin({
+			login,
+			columns: ["id", "login", "password", "status", "avatar"]
+		});
+		
 		if (!user) {
-			throw new AppError("Usúario não encontrado", 401);
+			throw new AppError(401, "Usúario não encontrado");
 		}
 
-		const isPasswordValid = await bcrypt.compare(password, user.senha);
+		const isPasswordValid = await bcrypt.compare(password, user.password);
 		if (!isPasswordValid) {
-			throw new AppError("Senha Inválida", 401);
+			throw new AppError(401, "Senha Inválida");
+			//log tentativa de acesso.. senha incorreta
 		}
 
-		if (user.status !== "active") {
-			throw new AppError("Usuário inativo. Contate o seu supervisor.", 403);
+		if (user.status !== 'active') {
+			throw new AppError(403, "Acesso indisponível. Contate o seu supervisor.");
+			//log tentativa de acesso.. status user
 		}
 
-        return { user };
+		return { user };
 	}
 
 	async changePassword(userId, newPassword) {
