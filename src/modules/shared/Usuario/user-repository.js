@@ -6,12 +6,12 @@ export class UserRepository {
 		this.trxKnex = trxKnex || knex;
 	}
 
-	async createUser(user) {
+	async insertUser(user) {
 		const insertedId = await this.trxKnex("users").insert(user);
 		return insertedId; // Return array of inserted IDs except for MySQL which returns the first inserted ID in the array
 	}
 
-	async createUserWithReturn(user) {
+	async insertUserWithReturn(user) {
 		const [insertedUser] = await this.trxKnex("users")
 			.insert(user)
 			.returning("*");
@@ -32,17 +32,17 @@ export class UserRepository {
 		return affectedRows; // Return the number of affected rows
 	}
 
-	async getAllUsers({columns = ["*"]}) {
+	async selectAllUsers({columns = ["*"]}) {
 		const users = await this.trxKnex("users").select(columns).whereNull('deleted_at');
 		return users; // Return an array of user objects or [] if none found
 	}
 
-	async getUserById({id, columns = ["*"]}) {
+	async selectUserById({id, columns = ["*"]}) {
 		const user = await this.trxKnex("users").select(columns).where({ id }).first();
 		return user; // Return the user object or undefined if not found 
 	}
 
-	async getUsersByIds({ids, columns = ["*"]}) {
+	async selectUsersByIds({ids, columns = ["*"]}) {
 		const users = await this.trxKnex("users")
 			.select(columns)
 			.whereIn("id", ids)
@@ -50,24 +50,26 @@ export class UserRepository {
 		return users; // Return an array of user objects or [] if none found
 	}
 
-	async getUserByLogin({login, columns = ["*"]}) {
+	async selectUserByLogin({login, columns = ["*"]}) {
 		const users = await this.trxKnex("users").select(columns).where({ login }).first();
 		return users; // Return the user object or undefined if not found
 	}
 
-	async getUsersLikeName({name, columns = ["*"]}) {
+	async selectUsersLikeName({name, columns = ["*"]}) {
 		const users = await this.trxKnex("users")
+			.select(columns)
 			.whereLike("name", `%${name}%`)
 			.whereNull("deleted_at");
 		return users; // Return an array of user objects or [] if none found
 	}
 
-	async getUserByUniqueFields({ login, email, columns = ["*"] }) {
+	async selectUserByUniqueFields({ login, email, columns = ["*"] }) {
 		const user = this.trxKnex("users")
 		.select(columns)
 		.where("login", login)
 		.orWhere("email", email)
-		.whereNull("deleted_at").first();
+		.whereNull("deleted_at")
+		.first();
 		return user; // Return the user object or undefined if not found
 	}	
 }

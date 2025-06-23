@@ -19,7 +19,7 @@ export class UserService {
 		// const newUser = { ...userData }; // Cria uma cópia do objeto userData
 		
 		//verificar ja existe usuario com o lofin ou email		
-		const existingUser = await this.userRepository.getUserByUniqueFields({
+		const existingUser = await this.userRepository.selectUserByUniqueFields({
 			login: userData.login,
 			email: userData.email,
 			columns: ["id", "login", "email"]
@@ -35,17 +35,22 @@ export class UserService {
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(userData.password, salt);
 		const newUserCopyUserData = { ...userData, password: hashedPassword };
-		const result = await this.userRepository.createUser(newUserCopyUserData);
+		const result = await this.userRepository.insertUser(newUserCopyUserData);
 		return result;
 	}
 
 	async getAllUsers() {
-		const users = await this.userRepository.getAllUsers();
+		const  columns = ["id", "name", "login", "email", "phone"];
+		const users = await this.userRepository.selectAllUsers({columns});
 		return { users };
 	}
 
 	async getUserById(id) {
-		const user = await this.userRepository.getUserById(id);
+		const  columns = ["id", "name", "login", "email", "phone"];
+		const user = await this.userRepository.selectUserById({id, columns});
+		if(!user) {
+			throw new AppError(404, "User not found");
+		}
 		return { user };
 	}
 }

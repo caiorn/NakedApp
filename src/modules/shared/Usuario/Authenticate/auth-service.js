@@ -10,7 +10,7 @@ export class AuthService {
 	}
 
 	async authenticate({ login, password }) {
-		const user = await this.userRepository.getUserByLogin({
+		const user = await this.userRepository.selectUserByLogin({
 			login,
 			columns: ["id", "login", "password", "status", "avatar"]
 		});

@@ -14,7 +14,10 @@ export const createUser = async (request, reply) => {
 	await knex.transaction(async (knexTransaction) => {
 		const userService = makeUserService(knexTransaction);
 		const user = await userService.createUser(validatedUser.data);
-		reply.code(201).send(user);
+		reply.success(201, {
+			data: user,
+			message: "User created successfully"
+		})
 	});
 };
 
@@ -55,26 +58,18 @@ export const deleteUser = async (request, reply) => {
 };
 
 export const getAllUsers = async (request, reply) => {
-	// usar a mesma transação para todas operacoes dentro do mesmo endpoint
-	const knexTransaction = await knex.transaction();
-	const userService = makeUserService(knexTransaction);
-
-	await knexTransaction.commit;
-	const users = await userService.getAllUsers();
-	if (!users || users.length === 0) {
-		throw new AppError(404, "No users found");
-	}
-
-	reply.code(200).send(users);
+	const userService = makeUserService();
+	const { users } = await userService.getAllUsers();
+	reply.success(200, {
+		data: users
+	});
 };
 
 export const getUserById = async (request, reply) => {
 	const userService = makeUserService();
-
 	const { id } = request.params;
-	const user = await userService.getUserById(id);
-	if (!user) {
-		return reply.code(404).send("User not found");
-	}
-	reply.code(200).send(user);
+	const { user } = await userService.getUserById(id);
+	reply.success(200, {
+		data: user
+	});
 };
