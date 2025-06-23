@@ -85,12 +85,12 @@ Erro de validação gerado por entrada de dados inválida (geralmente através d
   "error": "ValidationError",
   "issues": [
     {
-      "campo": "email",
-      "mensagem": "Email inválido"
+      "field": "email",
+      "message": "Email inválido"
     },
     {
-      "campo": "password",
-      "mensagem": "A senha deve conter pelo menos 6 caracteres"
+      "field": "password",
+      "message": "A senha deve conter pelo menos 6 caracteres"
     }
   ]
   "path": "/api/users",
