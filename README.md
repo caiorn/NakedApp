@@ -21,29 +21,28 @@ Esta API segue os princípios RESTful e utiliza um formato padronizado, inspirad
     "totalItems": 25,
     "filter": "active"
   },
-  "timestamp": "2025-05-07T21:24:04.522663Z",
   "path": "/api/users",
+  "timestamp": "2025-05-07T21:24:04.522663Z",
 }
 ```
-🧠 **Observações:**
-
-### 📌 **Campo `data`:**
+ **Observações:** 
+#### **Campo `data`:**
 - `[]` → Quando a resposta esperada é uma lista, mas está vazia  
 - `{}` → Quando é uma resposta de objeto, mas sem dados no momento  
 - `null` → Quando não há contexto aplicável ou nenhuma informação será retornada  
 
-### 💡 **Campo `message` (Opcional):**
+#### **Campo `message` (Opcional):**
 - Omitido se não tiver mensagem útil  
 - Usado para feedback amigável ou técnico (ex: `"Usuário criado"`, `"Processado com sucesso"`)  
 
-### 📘 **Campo `meta` (Opcional):**
+#### **Campo `meta` (Opcional):**
 - Adicione apenas quando necessário  
 - Ideal para:  
   - Paginação (`page`, `total`, `hasNext`)  
   - Filtros aplicados  
   - Informações de debug  
 
-### ✨ **Campo `status` (Sugestão):**
+#### **Campo `status` (Sugestão):**
 Embora não estivesse no exemplo original, muitas APIs (GitHub, Stripe, etc.) incluem o **status HTTP no corpo** da resposta. Isso ajuda:  
 - Clientes genéricos (dashboards, logs)  
 - Testes automáticos  
@@ -56,9 +55,9 @@ Embora não estivesse no exemplo original, muitas APIs (GitHub, Stripe, etc.) in
 ```json
 {
   "success": false,
-  "status": 401,
-  "error": "AppError",
+  "status": 401,  
   "message": "No Authorization",
+  "error": "AppError",
   "path": "/api/users/4",
   "timestamp": "2025-05-07T21:24:04.522670Z",
 }
@@ -81,11 +80,9 @@ Erro de validação gerado por entrada de dados inválida (geralmente através d
 ```json
 {
   "success": false,
-  "status": 400,
-  "error": "ValidationError",
+  "status": 400,  
   "message": "Erro de validação nos dados fornecidos.",
-  "path": "/api/users",
-  "timestamp": "2025-05-07T21:24:04.522671Z",
+  "error": "ValidationError",
   "issues": [
     {
       "campo": "email",
@@ -96,6 +93,8 @@ Erro de validação gerado por entrada de dados inválida (geralmente através d
       "mensagem": "A senha deve conter pelo menos 6 caracteres"
     }
   ]
+  "path": "/api/users",
+  "timestamp": "2025-05-07T21:24:04.522671Z",
 }
 ```
 
