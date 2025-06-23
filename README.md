@@ -9,16 +9,44 @@ Esta API segue os princípios RESTful e utiliza um formato padronizado, inspirad
 ```json
 {
   "success": true,
+  "status": 201
   "message": "Usuário criado com sucesso",
   "data": {
-    "Conteúdo real solicitado (ex: dados do usuário, lista de registros, etc.)"
+    "id": 123,
+    "name": "João Silva",
+    "email": "joao@exemplo.com"
   },
   "meta": {
-    "timestamp": "2025-05-07T21:24:04.522663Z",
-    "Outros dados adicionais, caso necessário (paginação, filtros, contexto de debug, etc.)"
-  }
+    "page": 1,
+    "totalItems": 25,
+    "filter": "active"
+  },
+  "path": "/api/users",
+  "timestamp": "2025-05-07T21:24:04.522663Z",
 }
 ```
+ **Observações:** 
+#### **Campo `data`:**
+- `[]` → Quando a resposta esperada é uma lista, mas está vazia  
+- `{}` → Quando é uma resposta de objeto, mas sem dados no momento  
+- `null` → Quando não há contexto aplicável ou nenhuma informação será retornada  
+
+#### **Campo `message` (Opcional):**
+- Omitido se não tiver mensagem útil  
+- Usado para feedback amigável ou técnico (ex: `"Usuário criado"`, `"Processado com sucesso"`)  
+
+#### **Campo `meta` (Opcional):**
+- Adicione apenas quando necessário  
+- Ideal para:  
+  - Paginação (`page`, `total`, `hasNext`)  
+  - Filtros aplicados  
+  - Informações de debug  
+
+#### **Campo `status` (Sugestão):**
+Embora não estivesse no exemplo original, muitas APIs (GitHub, Stripe, etc.) incluem o **status HTTP no corpo** da resposta. Isso ajuda:  
+- Clientes genéricos (dashboards, logs)  
+- Testes automáticos  
+- Depuração frontend  
 
 ---
 
@@ -27,9 +55,9 @@ Esta API segue os princípios RESTful e utiliza um formato padronizado, inspirad
 ```json
 {
   "success": false,
-  "status": 401,
-  "error": "AppError",
+  "status": 401,  
   "message": "No Authorization",
+  "error": "AppError",
   "path": "/api/users/4",
   "timestamp": "2025-05-07T21:24:04.522670Z",
 }
@@ -52,21 +80,21 @@ Erro de validação gerado por entrada de dados inválida (geralmente através d
 ```json
 {
   "success": false,
-  "status": 400,
-  "error": "ValidationError",
+  "status": 400,  
   "message": "Erro de validação nos dados fornecidos.",
-  "path": "/api/users",
-  "timestamp": "2025-05-07T21:24:04.522671Z",
+  "error": "ValidationError",
   "issues": [
     {
-      "campo": "email",
-      "mensagem": "Email inválido"
+      "field": "email",
+      "message": "Email inválido"
     },
     {
-      "campo": "password",
-      "mensagem": "A senha deve conter pelo menos 6 caracteres"
+      "field": "password",
+      "message": "A senha deve conter pelo menos 6 caracteres"
     }
   ]
+  "path": "/api/users",
+  "timestamp": "2025-05-07T21:24:04.522671Z",
 }
 ```
 
