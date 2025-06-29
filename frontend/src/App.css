@@ -1,0 +1,29 @@
+/* global.css ou app.css:
+// - Use para estilos globais do projeto (reset, fontes, body, html, etc).
+// - Ideal para coisas que se aplicam a **todas as páginas**.
+// - Ex: fontes, background padrão, scroll personalizado, etc.
+// - Normalmente importado uma vez no topo do app (ex: _app.js no Next.js).
+// - NÃO deve conter estilos de componentes específicos (isso é do module.css).
+*/
+
+:root {
+    /* references: https://v2.tailwindcss.com/docs/customizing-colors */
+    --white: #ffffff;
+    --red-50: #FEF2F2;
+    --red-100: #FEE2E2;
+    --red-200: #FECACA;
+    --red-300: #FCA5A5;
+    --red-400: #F87171;
+    --red-500: #EF4444;
+    --red-600: #DC2626;
+    --red-700: #B91C1C;
+    --red-800: #991B1B;
+    --red-900: #7F1D1D;
+}
+
+/* Estilos globais para centralizar o conteúdo */
+ body, html {
+    margin: 0;
+    padding: 0;
+    background-color: var(--white);
+} 

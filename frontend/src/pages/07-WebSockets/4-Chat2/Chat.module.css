@@ -1,0 +1,292 @@
+/* Removendo o seletor global e definindo estilos específicos apenas para o componente */
+.chatContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.chatContainer * {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* Tela de login */
+.loginContainer {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+.loginContainer h1 {
+  margin-bottom: 20px;
+  color: #333;
+  font-family: inherit;
+}
+
+.loginForm {
+  display: flex;
+  flex-direction: column;
+}
+
+.usernameInput {
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+  margin-bottom: 15px;
+  font-family: inherit;
+}
+
+.loginButton {
+  padding: 12px;
+  background-color: #4a6ee0;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: inherit;
+}
+
+.loginButton:hover {
+  background-color: #3a5bcc;
+}
+
+/* Chat principal */
+.chatBox {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 1000px;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  font-family: inherit;
+}
+
+.chatHeader {
+  padding: 15px 20px;
+  background-color: #4a6ee0;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.chatHeader h2 {
+  margin: 0;
+  font-family: inherit;
+}
+
+.connectionStatus {
+  font-size: 14px;
+}
+
+.statusConnected {
+  color: #4cff4c;
+}
+
+.statusDisconnected {
+  color: #ff4c4c;
+}
+
+.chatContent {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Lista de usuários */
+.usersList {
+  width: 200px;
+  padding: 15px;
+  background-color: #f8f8f8;
+  border-right: 1px solid #eee;
+  overflow-y: auto;
+}
+
+.usersList h3 {
+  font-size: 14px;
+  margin-bottom: 10px;
+  color: #555;
+  font-family: inherit;
+}
+
+.usersList ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.usersList li {
+  padding: 8px 0;
+  font-size: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.currentUser {
+  color: #4a6ee0;
+  font-weight: bold;
+}
+
+/* Área de mensagens */
+.messagesArea {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.messagesContainer {
+  flex: 1;
+  padding: 15px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.noMessages {
+  text-align: center;
+  color: #999;
+  margin: 20px 0;
+}
+
+.message {
+  display: flex;
+  margin-bottom: 5px;
+}
+
+.myMessage {
+  justify-content: flex-end;
+}
+
+.otherMessage {
+  justify-content: flex-start;
+}
+
+.messageBubble {
+  max-width: 70%;
+  padding: 10px 15px;
+  border-radius: 18px;
+  background-color: #f0f0f0;
+  position: relative;
+}
+
+.myMessage .messageBubble {
+  background-color: #4a6ee0;
+  color: white;
+  border-bottom-right-radius: 5px;
+}
+
+.otherMessage .messageBubble {
+  background-color: #f0f0f0;
+  border-bottom-left-radius: 5px;
+}
+
+.messageSender {
+  font-weight: bold;
+  font-size: 12px;
+  margin-bottom: 5px;
+}
+
+.messageText {
+  word-wrap: break-word;
+}
+
+.messageTime {
+  font-size: 11px;
+  opacity: 0.7;
+  text-align: right;
+  margin-top: 5px;
+}
+
+/* Formulário de mensagem */
+.messageForm {
+  display: flex;
+  padding: 15px;
+  border-top: 1px solid #eee;
+  background-color: #f8f8f8;
+}
+
+.messageInput {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  font-size: 14px;
+  margin-right: 10px;
+  font-family: inherit;
+}
+
+.sendButton {
+  padding: 0 20px;
+  background-color: #4a6ee0;
+  color: white;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  font-family: inherit;
+}
+
+.sendButton:hover {
+  background-color: #3a5bcc;
+}
+
+.sendButton:disabled,
+.messageInput:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  .chatBox {
+    height: 100vh;
+    max-width: 100%;
+    border-radius: 0;
+  }
+  
+  .usersList {
+    width: 120px;
+  }
+  
+  .messageBubble {
+    max-width: 85%;
+  }
+}
+
+@media (max-width: 576px) {
+  .chatContent {
+    flex-direction: column;
+  }
+  
+  .usersList {
+    width: 100%;
+    height: 120px;
+    border-right: none;
+    border-bottom: 1px solid #eee;
+  }
+  
+  .usersList ul {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+  
+  .usersList li {
+    border: 1px solid #eee;
+    padding: 5px 10px;
+    border-radius: 15px;
+    border-bottom: none;
+  }
+}

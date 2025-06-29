@@ -1,0 +1,1 @@
+- Componentes react devem sempre começar com a letra maiuscula para não confundir com elementos html
