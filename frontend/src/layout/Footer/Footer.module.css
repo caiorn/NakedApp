@@ -1,0 +1,41 @@
+/* Footer.module.css */
+.windowsFooter {
+  background-color: #f0f0f0;
+  border-top: 1px solid #d6d6d6;
+  color: #333;
+  font-family: 'Segoe UI', sans-serif;
+  font-size: 12px;
+  padding: 4px 8px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  margin-top: auto;
+}
+
+.footerContent {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.statusBar {
+  display: flex;
+  gap: 15px;
+}
+
+.statusItem {
+  padding: 2px 6px;
+  background-color: #e5e5e5;
+  border-radius: 3px;
+}
+
+.copyright {
+  opacity: 0.8;
+}
+
+/* Efeitos hover para itens interativos (opcional) */
+.statusItem:hover {
+  background-color: #d5d5d5;
+  cursor: default;
+}

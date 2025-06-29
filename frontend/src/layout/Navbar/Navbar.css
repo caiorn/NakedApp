@@ -1,22 +1,26 @@
-/* Estilo do menu */
-.menu {
-  background-color: #333;
+/* Menu estilo Windows 10 - Atualizado */
+.windows-menu-bar {
+  background-color: #f0f0f0;
+  border: 1px solid #d6d6d6;
+  border-bottom: 1px solid #ccc;
   display: flex;
-  justify-content: left;
-  align-items: center;
-  height: 40px;
-  font-size: 16px;
-  color: #f0f0f0;
+  height: 28px;
+  font-size: 13px;
+  color: #000;
+  font-family: 'Segoe UI', sans-serif;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 2px 0;
 }
 
 .menu-item {
   position: relative;
-  padding: 10px 20px;
+  padding: 6px 12px;
   cursor: pointer;
+  color: #333;
 }
 
 .menu-item:hover {
-  background-color: #444;
+  background-color: #e5e5e5;
 }
 
 .menu-item a {
@@ -29,29 +33,30 @@
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #333;
-  min-width: 160px;
+  background-color: #f9f9f9;
+  min-width: 180px;
   top: 100%;
   left: 0;
-  z-index: 1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  border: 1px solid #d6d6d6;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 100;
 }
 
 .dropdown-content a {
-  padding: 10px 20px;
-  color: #f0f0f0;
+  padding: 6px 16px;
+  color: #000;
   text-decoration: none;
-  display: block;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .dropdown-content a:hover {
-  background-color: #444;
+  background-color: #e5e5e5;
 }
 
 .menu-item:hover .dropdown-content {
   display: block;
-  opacity: 1;
 }
 
 /* Submenus */
@@ -60,38 +65,39 @@
   left: 100%;
   top: 0;
   display: none;
-  background-color: #444;
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  border: 1px solid #d6d6d6;
+  box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .submenu a {
-  padding: 10px 20px;
-  color: #f0f0f0;
-  text-decoration: none;
+  padding: 6px 16px;
+  color: #000;
   display: block;
 }
 
 .submenu a:hover {
-  background-color: #1abc9c;
+  background-color: #e5e5e5;
 }
 
-/* Mostrar submenu */
-.dropdown-content .submenu-item:hover .submenu {
-  display: block;
-  opacity: 1;
-}
-
-/* Delay para hover */
-.menu-item:hover .dropdown-content,
-.dropdown-content:hover {
-  opacity: 1;
-}
-
-.submenu-item {
+.dropdown-content .submenu-item {
   position: relative;
 }
 
-.dropdown-content .submenu-item:hover {
-  background-color: #333;
+.dropdown-content .submenu-item:hover .submenu {
+  display: block;
+}
+
+.submenu-arrow {
+  font-size: 10px;
+  margin-left: 10px;
+  color: #666;
+}
+
+/* Separador opcional - caso queira adicionar */
+.menu-separator {
+  height: 1px;
+  background-color: #ddd;
+  margin: 4px 0;
 }

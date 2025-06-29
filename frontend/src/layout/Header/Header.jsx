@@ -8,8 +8,8 @@ export default function Header({ children }) {
 				display: 'flex',
 				justifyContent: 'space-between',
 				alignItems: 'center',
-				padding: '4px 20px',
-				backgroundColor: '#333'
+				padding: '4px 4px',
+				backgroundColor: 'var(--header-background-color)',
 			}}
 		>
 			{/* Renderiza os filhos do componente */}
