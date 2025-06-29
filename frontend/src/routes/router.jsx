@@ -1,22 +1,33 @@
+import { createBrowserRouter } from 'react-router-dom'
+
+// Layouts
+import RootLayout from '../layout/RootLayout'
+
+// Páginas principais
 import Login from '../pages/01-SingIn/SingIn'
 import Main from '../pages/02-Home/Home'
-import GeradorSenhas from '../pages/GeradorSenhas/GeradorSenhas'
-import BibliotecaLista from '../pages/BibliotecaLista/BibliotecaLista'
 
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
-import RootLayout from '../layout/RootLayout'
-import User from '../pages/03-User/User'
-import Equipament from '../pages/Equipament/Equipament'
-import loadEquipament from '../loaders/EquipamentsLoader'
+// Páginas de erro
+import ErrorPage from '../pages/ErrorPage'
+
+// Módulo de Usuários
+import UserList from '../pages/03-User/UserList'
+import UserForm from '../pages/03-User/UserForm'
+import UserDetails from '../pages/03-User/UserDetails'
+import TestBoundaryForm from '../pages/03-User/Test'
+
+// Loaders e boundaries
+import loadUser from '../loaders/UsersLoad'
 import EquipamentBoundary from '../error-boundaries/EquipamentBoundary'
-import PrivateRoute from './PrivateRoute' // Importa o componente de rota privada
-import Chat from '../pages/07-WebSockets/4-Chat2/Chat'
-import StatusAndIncrement from '../pages/07-WebSockets/1-Samples/StatusAndIncrement'
+
+// Rota privada
+import PrivateRoute from './PrivateRoute'
 
 const router = createBrowserRouter([
 	{
 		path: '/',
-		element: <Login />
+		element: <Login />,
+		errorElement: <ErrorPage />		
 	},
 	{
 		path: '/main',
@@ -30,63 +41,53 @@ const router = createBrowserRouter([
 					</PrivateRoute>
 				)
 			},
+			// Grupo de rotas do módulo "Usuários"
 			{
-				path: 'websockets/sample',
-				element: (
-					<PrivateRoute>
-						<StatusAndIncrement />
-					</PrivateRoute>
-				) // Protege a rota com PrivateRoute
-			},
-			{
-				path: 'websockets/chat2',
-				element: (
-					<PrivateRoute>
-						<Chat />
-					</PrivateRoute>
-				) // Protege a rota com PrivateRoute
-			},
-			{
-				path: 'user',
-				element: (
-					<PrivateRoute>
-						<User />
-					</PrivateRoute>
-				) // Protege a rota com PrivateRoute
-			},
-			{
-				path: 'user/:userId',
-				element: (
-					<PrivateRoute>
-						<User />
-					</PrivateRoute>
-				) // Protege a rota com PrivateRoute
-			},
-			{
-				path: 'equipament/:equipamentId',
-				element: (
-					<PrivateRoute>
-						<Equipament />
-					</PrivateRoute>
-				), // Protege a rota com PrivateRoute
-				loader: loadEquipament,
-				errorElement: <EquipamentBoundary />
-			},
-			{
-				path: 'geradorsenhas',
-				element: (
-					<PrivateRoute>
-						<GeradorSenhas />
-					</PrivateRoute>
-				) // Protege a rota com PrivateRoute
-			},
-			{
-				path: 'bibliotecalista',
-				element: (
-					<PrivateRoute>
-						<BibliotecaLista />
-					</PrivateRoute>
-				) // Protege a rota com PrivateRoute
+				path: 'users',
+				children: [
+					{
+						index: true,
+						element: (
+							<PrivateRoute>
+								<UserList />
+							</PrivateRoute>
+						)
+					},
+					{
+						path: 'new',
+						element: (
+							<PrivateRoute>
+								<UserForm />
+							</PrivateRoute>
+						)
+					},
+					{
+						path: ':userId',
+						element: (
+							<PrivateRoute>
+								<UserForm />
+							</PrivateRoute>
+						)
+					},
+					{
+						path: ':userId/details',
+						element: (
+							<PrivateRoute>
+								<UserDetails />
+							</PrivateRoute>
+						)
+					},
+					{
+						path: ':userId/test',
+						element: (
+							<PrivateRoute>
+								<TestBoundaryForm />
+							</PrivateRoute>
+						),
+						loader: loadUser,
+						errorElement: <EquipamentBoundary />
+					}
+				]
 			}
 		]
 	}

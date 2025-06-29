@@ -8,7 +8,7 @@
  * e devem retornar os dados que serão acessados com `useLoaderData()` no componente.
  */
 
-export default function loadEquipament({params}) {   
+export default function loadUser({params}) {   
     console.log("string param:" + params.equipamentId);
 
     //simulando resposta servidor para testar error boundary

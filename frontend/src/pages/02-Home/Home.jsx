@@ -6,6 +6,8 @@ import SecondaryButton from '../../components/Button/SecondaryButton'
 
 export default function Home() {
 	const [strList, setList] = useState([])
+	const [count, setCount] = useState(0)
+
 
 	useEffect(() => {
 		console.log('strList', strList)
@@ -26,9 +28,17 @@ export default function Home() {
 				textLabel="Saiba Mais"
 				onClick={() => alert('Saiba Mais clicado!')}
 			/>
+			<br />
 			<time title="12 de Abril às 11:47h" dateTime="2025-04-12 11:4600">
 				Publicado há 10min
 			</time>
+			<br />
+			<h2>useState - Contador</h2>
+			<p>Valor atual: {count}</p>
+			<button type="button" onClick={() => setCount(count + 1)}>
+				Incrementar
+			</button>
+			<br />
 			{/* Renderiza as subrotas aqui */}
 			<button type="button" onClick={() => addItem('Novo Item')}>
 				Adicionar Item
