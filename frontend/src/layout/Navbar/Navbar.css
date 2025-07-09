@@ -1,14 +1,10 @@
 /* Menu estilo Windows 10 - Atualizado */
 .windows-menu-bar {
-  background-color: #f0f0f0;
-  border: 1px solid #d6d6d6;
-  border-bottom: 1px solid #ccc;
   display: flex;
   height: 28px;
   font-size: 13px;
   color: #000;
   font-family: 'Segoe UI', sans-serif;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   padding: 2px 0;
 }
 
@@ -43,7 +39,7 @@
 }
 
 .dropdown-content a {
-  padding: 6px 16px;
+  padding: 4px 16px;
   color: #000;
   text-decoration: none;
   display: flex;
@@ -99,5 +95,5 @@
 .menu-separator {
   height: 1px;
   background-color: #ddd;
-  margin: 4px 0;
+  margin: 2px 0;
 }

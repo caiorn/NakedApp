@@ -62,19 +62,16 @@ function Login() {
 			style={{
 				display: 'flex',
 				justifyContent: 'center',
-				alignItems: 'center'
+				alignItems: 'center',
+				backgroundColor: 'aquamarine',
+				height: '100vh', // Ocupa toda a altura da viewport
 			}}
 		>
-			<form
+			<form 
 				onSubmit={handleSubmit}
-				style={{
-					display: 'flex',
-					flexDirection: 'column',
-					width: '300px',
-					backgroundColor: '#f0f0f0',
-					padding: '20px',
-					margin: '100px'
-				}}
+				// style={{
+				// 	backgroundColor: '#f0f0f0',
+				// }}
 			>
 				<h2>Sign In</h2>
 				<label htmlFor="username">Username:</label>
@@ -96,7 +93,7 @@ function Login() {
 				/>
 				{error && <span style={{ color: 'red' }}>{error}</span>}
 				<button
-					style={{ marginTop: '20px' }}
+					style={{ marginTop: '20px', width: '100%' }}
 					type="submit"
 					className={`${loading ? 'loading' : ''}`} // Adiciona a classe de loading
 					disabled={loading} // Desabilita o botão enquanto carrega

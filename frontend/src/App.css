@@ -7,19 +7,12 @@
 */
 
 :root {
-    /* references: https://v2.tailwindcss.com/docs/customizing-colors */
-    --white: #ffffff;
-    --red-50: #FEF2F2;
-    --red-100: #FEE2E2;
-    --red-200: #FECACA;
-    --red-300: #FCA5A5;
-    --red-400: #F87171;
-    --red-500: #EF4444;
-    --red-600: #DC2626;
-    --red-700: #B91C1C;
-    --red-800: #991B1B;
-    --red-900: #7F1D1D;
+    --header-background-color: transparent;
+    --footer-background-color: #f0f0f0;
 }
+
+* { box-sizing: border-box; } 
+
 
 /* Estilos globais para centralizar o conteúdo */
  body, html {
@@ -27,3 +20,24 @@
     padding: 0;
     background-color: var(--white);
 } 
+
+form {
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f0f0;
+    padding: 20px;
+    margin: 1px auto; /* Centraliza verticalmente */
+    min-width: 300px;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"] {
+  width: 100%;
+}

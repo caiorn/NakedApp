@@ -1,5 +1,3 @@
-import styles from './Header.module.css'
-
 export default function Header({ children }) {
 	return (
 		<header
@@ -8,8 +6,7 @@ export default function Header({ children }) {
 				display: 'flex',
 				justifyContent: 'space-between',
 				alignItems: 'center',
-				padding: '4px 4px',
-				backgroundColor: 'var(--header-background-color)',
+				backgroundColor: 'transparent',
 			}}
 		>
 			{/* Renderiza os filhos do componente */}

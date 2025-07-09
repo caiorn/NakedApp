@@ -1,3 +1,13 @@
+/*
+// Usamos modules.css para:
+// - Evitar conflitos de nomes de classe
+// - Garantir estilo encapsulado por componente
+// - Manter o código mais organizado e escalável 
+// - Use **apenas classes**, IDs não funcionam corretamente. classes ficam únicos, evita conflito entre componentes.
+// - Na importação: import styles from './Componente.module.css' (diferente quando nao usa modulo import '/style.css'
+// - Na tag: className={styles.nomeDaClasse}
+*/
+
 /* Footer.module.css */
 .windowsFooter {
   background-color: #f0f0f0;
@@ -25,7 +35,6 @@
 }
 
 .statusItem {
-  padding: 2px 6px;
   background-color: #e5e5e5;
   border-radius: 3px;
 }

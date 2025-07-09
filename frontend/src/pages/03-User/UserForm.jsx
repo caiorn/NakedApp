@@ -42,23 +42,27 @@ function UserForm({ initialData, userId, createUser, updateUser }) {
     }
 
     return (
-        <form onSubmit={handleSubmit}>
-            <h2>{isEditing ? 'Editar Usuário' : 'Criar Usuário'}</h2>
-
-            <div>
+        <div
+            style={{
+  				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+				backgroundColor: 'aquamarine',
+            }}
+        >
+            <form onSubmit={handleSubmit}>
+                <h2>{isEditing ? 'Editar Usuário' : 'Criar Usuário'}</h2>
                 <label>
                     Username:
                     <input
                         type="text"
                         name="username"
+                        style={{ width: '100%' }}
                         value={formData.username}
                         onChange={handleChange}
                         required
                     />
                 </label>
-            </div>
-
-            <div>
                 <label>
                     Email:
                     <input
@@ -69,9 +73,6 @@ function UserForm({ initialData, userId, createUser, updateUser }) {
                         required
                     />
                 </label>
-            </div>
-
-            <div>
                 <label>
                     <input
                         type="checkbox"
@@ -81,12 +82,11 @@ function UserForm({ initialData, userId, createUser, updateUser }) {
                     />
                     Primeiro Acesso?
                 </label>
-            </div>
-
-            <button type="submit">
-                {isEditing ? 'Atualizar' : 'Cadastrar'}
-            </button>
-        </form>
+                <button type="submit">
+                    {isEditing ? 'Atualizar' : 'Cadastrar'}
+                </button>
+            </form>
+        </div>
     )
 }
 
