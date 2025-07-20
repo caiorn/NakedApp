@@ -1,28 +1,28 @@
 .loading {
-    background-color: #ccc !important;
-    color: #666 !important;
-    cursor: not-allowed !important;
-    opacity: 0.6;
-    position: relative;
-    transition: 0.3s ease;
+  background-color: #2c2f36 !important; /* cinza escuro azulado */
+  color: #bbb !important;               /* cinza claro para contraste */
+  cursor: not-allowed !important;
+  opacity: 0.6;
+  position: relative;
+  transition: 0.3s ease;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  border: 2px solid #555;               /* cinza médio escuro */
+  border-top: 2px solid transparent;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: translateY(-50%) rotate(360deg);
   }
-  
-  .loading::after {
-    content: '';
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 16px;
-    height: 16px;
-    border: 2px solid #999;
-    border-top: 2px solid transparent;
-    border-radius: 50%;
-    animation: spin 0.6s linear infinite;
-  }
-  
-  @keyframes spin {
-    to {
-      transform: translateY(-50%) rotate(360deg);
-    }
-  }
+}

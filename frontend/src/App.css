@@ -7,8 +7,7 @@
 */
 
 :root {
-    --header-background-color: transparent;
-    --footer-background-color: #f0f0f0;
+    --background-color: #bbb;
 }
 
 * { box-sizing: border-box; } 
@@ -18,7 +17,7 @@
  body, html {
     margin: 0;
     padding: 0;
-    background-color: var(--white);
+    background-color: var(--background-color);
 } 
 
 form {
@@ -26,8 +25,6 @@ form {
     flex-direction: column;
     background-color: #f0f0f0;
     padding: 20px;
-    margin: 1px auto; /* Centraliza verticalmente */
-    min-width: 300px;
 }
 
 label {

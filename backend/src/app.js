@@ -10,8 +10,6 @@ import { responseDecorator } from './plugins/response-decorator.js'
 
 export const app = fastify()
 
-app.decorate('db', knex);
-
 app.addHook('onRequest', async (request, reply) => {
   console.log('➡️ Nova requisição recebida');
 });
@@ -31,6 +29,9 @@ app.addHook('onError', async (request, reply, error) => {
 app.register(fastifyJwt, { secret: env.JWT_SECRET, sign: { expiresIn: env.JWT_EXPIRATION } });
 app.register(appRoutes, { prefix: '/api' })
 
+app.decorate('db', knex);
+
+app.decorateRequest('currentUser', null);
 app.decorateReply('success', function (statusCode, {data, message = null, meta = {}}) {
   const response = {
     success: true,

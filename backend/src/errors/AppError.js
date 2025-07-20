@@ -7,9 +7,10 @@
 */
 
 export class AppError extends Error {
-	constructor(statusCode = 422, message = 'An error occurred' ) {
+	constructor(statusCode = 422, message = 'An error occurred', issues) {
 		super(message)
 		this.statusCode = statusCode
+		this.issues = issues && (Array.isArray(issues) ? issues : [issues] )
 		Error.captureStackTrace?.(this, this.constructor)
 	}
 }

@@ -1,6 +1,5 @@
 import { AppError } from "../errors/AppError.js"
 
-
 export async function verifyJWT(request, reply) {
     // const token = request.cookies.sessionId
 
@@ -11,8 +10,16 @@ export async function verifyJWT(request, reply) {
     // }
 
     try {
-        await request.jwtVerify()
+        const decoded = await request.jwtVerify();
+
+      
     } catch (err) {
-        throw new AppError(401, "No Authorization")
+        if (err.name === 'JsonWebTokenError') {
+            throw new AppError(401, "Invalid Token");
+        }
+        if (err.name === 'TokenExpiredError') {
+            throw new AppError(401, "Token Expired");
+        }
+        throw new AppError(err.statusCode, "No Authorization");
     }
 }

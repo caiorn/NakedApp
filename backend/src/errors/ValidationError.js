@@ -13,11 +13,9 @@ export class ValidationError extends Error {
 				field: issue.path.join('.'),
 				message: issue.message,
 			}));
-		} else if (Array.isArray(source)) {
-			this.issues = source; // lista de issues manual
-		} else {
-			this.issues = [];
-		}
+		} else if (source) {
+			this.issues = Array.isArray(source) ? source : [source]; // lista de issues manual
+		} 
 
 		Error.captureStackTrace?.(this, this.constructor);
 	}

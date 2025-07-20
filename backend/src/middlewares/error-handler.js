@@ -6,7 +6,7 @@ import { ValidationError } from '../errors/ValidationError.js'
 export function errorHandler(error, request, reply) {
     try {
         const errorResponse = {
-            success : false,
+            success: false,
             status: error.statusCode || 500,
             message: error.message || 'Internal Server Error',
             error: error.constructor.name
@@ -14,18 +14,18 @@ export function errorHandler(error, request, reply) {
 
         if (error instanceof ValidationError && error.issues) {
             errorResponse.issues = error.issues
+        }else if (error instanceof AppError && error.issues) {
+            errorResponse.issues = error.issues
+        }else{
+            //se for um erro nao identificado/bug
+            console.error(error.stack);
         }
 
         errorResponse.path = request.url;
         errorResponse.timestamp = new Date().toISOString();
 
-        //se for um erro nao identificado/bug
-        if (error.constructor === Error) {
-            console.error(error.stack);    
-        }
-
         //se não tiver em producao, incluir o origin na resposta
-        if (env.NODE_ENV !== 'production' && error.stack) {            
+        if (env.NODE_ENV !== 'production' && error.stack) {
             const stackLines = error.stack.split('\n');
             // Pega a primeira linha que esteja fora de node_modules e internal, e dentro do seu src
             const origin = stackLines.find(line =>

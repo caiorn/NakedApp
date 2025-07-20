@@ -11,15 +11,22 @@ export async function authenticateUser(request, reply) {
     }
     const { login, password } = validatedUser.data;
     const authService = new AuthService(new UserRepository())
-    const { user } = await authService.authenticate({ login, password });
-
-    // Gerar o token JWT
-    const token = await reply.jwtSign(
-        { id: user.id }
-    );
-
+    const { user: {id, nome, avatar} } = await authService.findUserByLoginAndPassword({ login, password });
+    const token = await reply.jwtSign( { sub: id } );
     reply.success(200, { 
         message: 'Usuário autenticado com sucesso',
-        data: { user, token } 
+        data: { token, user: { id, nome, avatar } } 
     });
 }
+
+export const getInfoToken = async (request, reply) => {
+    const { user } = request;
+    const payload = {
+        ...user,
+        iat: new Date(user.iat * 1000), // Data de emissão
+        exp: new Date(user.exp * 1000)  // Data de expiração
+    };
+    reply.success(200, {
+        data: payload
+    });
+};

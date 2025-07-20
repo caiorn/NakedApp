@@ -34,6 +34,7 @@ function UserForm({ initialData, userId, createUser, updateUser }) {
     // Submit handler
     const handleSubmit = (e) => {
         e.preventDefault()
+        console.log('Form submitted:', formData)
         if (isEditing) {
             updateUser(userId, formData)
         } else {
@@ -42,16 +43,9 @@ function UserForm({ initialData, userId, createUser, updateUser }) {
     }
 
     return (
-        <div
-            style={{
-  				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-				backgroundColor: 'aquamarine',
-            }}
-        >
+        <div style={{ display: 'flex'}}>
             <form onSubmit={handleSubmit}>
-                <h2>{isEditing ? 'Editar Usuário' : 'Criar Usuário'}</h2>
+                <h2>{isEditing ? 'Update User' : 'Create User'}</h2>
                 <label>
                     Username:
                     <input
@@ -73,8 +67,9 @@ function UserForm({ initialData, userId, createUser, updateUser }) {
                         required
                     />
                 </label>
-                <label>
+                <label htmlFor="isFirstAccess">
                     <input
+                        id="isFirstAccess"
                         type="checkbox"
                         name="isFirstAccess"
                         checked={formData.isFirstAccess}
@@ -82,7 +77,8 @@ function UserForm({ initialData, userId, createUser, updateUser }) {
                     />
                     Primeiro Acesso?
                 </label>
-                <button type="submit">
+                <button 
+                    type="submit" /*style={{ width: '50%', margin: '0 auto' }} */                >
                     {isEditing ? 'Atualizar' : 'Cadastrar'}
                 </button>
             </form>

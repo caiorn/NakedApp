@@ -9,10 +9,10 @@ export class AuthService {
 		this.token = null;
 	}
 
-	async authenticate({ login, password }) {
+	async findUserByLoginAndPassword({ login, password }) {
 		const user = await this.userRepository.selectUserByLogin({
 			login,
-			columns: ["id", "login", "password", "status", "avatar"]
+			columns: ["id", "name", "password", "status", "avatar"]
 		});
 		
 		if (!user) {

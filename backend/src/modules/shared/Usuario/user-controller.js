@@ -1,49 +1,65 @@
-import { userSchema } from "./user.schema.js";
+import * as userSchema from "./user.schema.js";
 import { knex } from "../../../db/knex-db.js";
-import { AppError } from "../../../errors/AppError.js";
 import { makeUserService } from "./user-service-factory.js";
 import { ValidationError } from "../../../errors/ValidationError.js";
 
-export const createUser = async (request, reply) => {
-	// validação de entrada de dados JSON se inválido, throw ZodError
-	const validatedUser = userSchema.safeParse(request.body);
-	if(!validatedUser.success){
-		throw new ValidationError(400, "Não foi possivel criar o usúario, há campos inválidos.", validatedUser)
+
+export const addUser = async (request, reply) => {
+	const { userLogged } = request;
+	const isArray = Array.isArray(request.body);
+	const schema = isArray ? userSchema.newUsers : userSchema.newUser;
+	
+	const validatedUser = schema.safeParse(request.body);
+	if (!validatedUser.success) {
+		throw new ValidationError(400, "Não foi possivel criar o usúario, há campos inválidos.", validatedUser);
 	}
 
 	await knex.transaction(async (knexTransaction) => {
-		const userService = makeUserService(knexTransaction);
-		const user = await userService.createUser(validatedUser.data);
-		reply.success(201, {
-			data: user,
-			message: "User created successfully"
-		})
+		const userService = makeUserService(knexTransaction);		
+		const users = isArray 
+			? await userService.createUserBatch(validatedUser.data, userLogged)
+			: await userService.createUser(validatedUser.data, userLogged);
+			
+		const message = isArray ? "Users created successfully" : "User created successfully";		
+		reply.success(201, { data: users, message });
 	});
 };
 
 export const setUserAvatar = async (request, reply) => {
 	const { id } = request.params;
-    
+
 }
 
-export const updateUser = async (request, reply) => {
-	// const { id } = request.params;
-	// const validatedUser = userSchema.parse(request.body);
+export const editUser = async (request, reply) => {
+	const { id } = request.params;
+	const userId = Number(id);
+	if (!Number.isInteger(userId) || userId <= 0) {
+		throw new ValidationError(400, "ID do usuário deve ser um número inteiro positivo.", id);
+	}
 
-	// const knexTransaction = await knex.transaction(); 
-	// try {
-	// 	const userService = makeUserService(knexTransaction);
-	// 	const user = await userService.updateUser(id, validatedUser);
-	// 	await knexTransaction.commit();
-	// 	reply.code(200).send(user);
-	// } catch (error) {
-	// 	await knexTransaction.rollback();
-	// throw error;
-	// }
+
+	const validatedUser = userSchema.editUser.safeParse(request.body);
+	if (!validatedUser.success) {
+		throw new ValidationError(400, "Não foi possivel atualizar o usúario, há campos inválidos.", validatedUser)
+	}
+
+	const knexTransaction = await knex.transaction();
+	try {
+		const userService = makeUserService(knexTransaction);
+		const affectedRows = await userService.changeUser(userId, validatedUser.data, request.userLogged);
+		await knexTransaction.commit();
+		reply.success(200, {
+			data: affectedRows,
+			message: `User updated successfully`
+		});
+	} catch (error) {
+		await knexTransaction.rollback();
+		throw error;
+	}
 };
 
 
-export const deleteUser = async (request, reply) => {
+export const delUser = async (request, reply) => {
 	// const { id } = request.params;
 	// const knexTransaction = await knex.transaction(); 
 	// try {
@@ -57,9 +73,13 @@ export const deleteUser = async (request, reply) => {
 	// }
 };
 
-export const getAllUsers = async (request, reply) => {
+export const listAllUsers = async (request, reply) => {
+	const { userLogged } = request;
+	console.log(userLogged);
+
+
 	const userService = makeUserService();
-	const { users } = await userService.getAllUsers();
+	const { users } = await userService.findAllUsers();
 	reply.success(200, {
 		data: users
 	});
@@ -68,7 +88,7 @@ export const getAllUsers = async (request, reply) => {
 export const getUserById = async (request, reply) => {
 	const userService = makeUserService();
 	const { id } = request.params;
-	const { user } = await userService.getUserById(id);
+	const { user } = await userService.findUserById(id);
 	reply.success(200, {
 		data: user
 	});

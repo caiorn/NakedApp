@@ -8,7 +8,7 @@ export const profileRoutes = async (fastify, options) => {
         const { sub : id} = request.user; // Assuming the user ID is in the JWT payload
 
         const userService = makeUserService();
-        const user = await userService.getUserById(id);
+        const user = await userService.findUserById(id);
         if (!user) {
             return reply.code(404).send("User not found");
         }

@@ -63,7 +63,6 @@ function Login() {
 				display: 'flex',
 				justifyContent: 'center',
 				alignItems: 'center',
-				backgroundColor: 'aquamarine',
 				height: '100vh', // Ocupa toda a altura da viewport
 			}}
 		>
