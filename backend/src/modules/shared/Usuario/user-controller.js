@@ -2,6 +2,7 @@ import * as userSchema from "./user.schema.js";
 import { knex } from "../../../db/knex-db.js";
 import { makeUserService } from "./user-service-factory.js";
 import { ValidationError } from "../../../errors/ValidationError.js";
+import { cacheMemory, CacheKeys } from "../../../utils/cache-memory.js";
 
 
 export const addUser = async (request, reply) => {
@@ -37,7 +38,6 @@ export const editUser = async (request, reply) => {
 		throw new ValidationError(400, "ID do usuário deve ser um número inteiro positivo.", id);
 	}
 
-
 	const validatedUser = userSchema.editUser.safeParse(request.body);
 	if (!validatedUser.success) {
 		throw new ValidationError(400, "Não foi possivel atualizar o usúario, há campos inválidos.", validatedUser)
@@ -48,6 +48,7 @@ export const editUser = async (request, reply) => {
 		const userService = makeUserService(knexTransaction);
 		const affectedRows = await userService.changeUser(userId, validatedUser.data, request.userLogged);
 		await knexTransaction.commit();
+		cacheMemory.delete(CacheKeys.USER(userId));
 		reply.success(200, {
 			data: affectedRows,
 			message: `User updated successfully`
@@ -60,28 +61,38 @@ export const editUser = async (request, reply) => {
 
 
 export const delUser = async (request, reply) => {
-	// const { id } = request.params;
-	// const knexTransaction = await knex.transaction(); 
-	// try {
-	// 	const userService = makeUserService(knexTransaction);
-	// 	await userService.deleteUser(id);
-	// 	await knexTransaction.commit();
-	// 	reply.code(204).send();
-	// } catch (error) {
-	// 	await knexTransaction.rollback();
-	// 	throw error;
-	// }
+	const { id } = request.params;
+	const knexTransaction = await knex.transaction(); 
+
+	await knex.transaction(async (knexTransaction) => {
+		const userService = makeUserService(knexTransaction);
+		await userService.deleteUser(id);
+		cacheMemory.delete(CacheKeys.USER(id));
+		reply.success(200, {
+			data: null,
+			message: `User deleted successfully`
+		});
+	});
 };
 
 export const listAllUsers = async (request, reply) => {
 	const { userLogged } = request;
 	console.log(userLogged);
 
-
 	const userService = makeUserService();
 	const { users } = await userService.findAllUsers();
 	reply.success(200, {
 		data: users
+	});
+};
+
+export const getMe = async (request, reply) => {
+	const { userLogged } = request;
+	if (!userLogged) {
+		throw new ValidationError(404, "User not found");
+	}
+	reply.success(200, {
+		data: userLogged
 	});
 };
 

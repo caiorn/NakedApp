@@ -2,13 +2,16 @@ import { knex } from "../../../db/knex-db.js";
 
 export class UserRepository {
 	constructor(trxKnex) {
-		/** @type {knex} */
+		/** @type {import("knex").Knex} */
 		this.db = trxKnex || knex;
+	}
+	async #simulateDelay(ms = 500) {
+		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
 	async insertUsers(users) {
 		// PostgreSQL: descomente essa linha se estiver usando Postgres
-		 const insertedUsers = await this.db("users").insert(users).returning('id');
+		const insertedUsers = await this.db("users").insert(users).returning('id');
 
 		// // MySQL: retorna apenas o primeiro ID inserido (auto-increment)
 		// const [insertedId] = await this.db("users").insert(users);
@@ -28,6 +31,7 @@ export class UserRepository {
 	}
 
 	async destroyUsersSoftly(ids = []) {
+	
 		const affectedRows = await this.db("users")
 			.whereIn("id", ids)
 			.update({ deleted_at: this.db.fn.now() });
@@ -40,6 +44,7 @@ export class UserRepository {
 	}
 
 	async selectUsersByIds({ ids, columns = ["*"] }) {
+		await this.#simulateDelay(1000); // Simula um delay de 1 segundo
 		const users = await this.db("users")
 			.select(columns)
 			.whereIn("id", ids)

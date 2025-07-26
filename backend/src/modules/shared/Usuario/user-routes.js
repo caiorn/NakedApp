@@ -20,12 +20,11 @@ export const userRoutes = async (fastify) => {
 			return { status: 'ok' };
 		});
 
-	// Rota para buscar todos os usuários
-	fastify.get('/all', { preHandler: [verifyJWT, attachUserHandler] }, userController.listAllUsers)
-	// Rota para buscar usuário por ID
-	fastify.get('/:id', { preHandler: [verifyJWT, attachUserHandler] }, userController.getUserById)
-	// // Rota para criar um novo usuário
-	fastify.post('/', { preHandler: [verifyJWT, attachUserHandler] }, userController.addUser)
+	fastify.get('/me', { preHandler: [verifyJWT, attachUserHandler] }, userController.getMe); 			// Rota para obter informações do usuário logad
+	fastify.get('/all', { preHandler: [verifyJWT, attachUserHandler] }, userController.listAllUsers); 	// Rota para buscar todos os usuários
+	fastify.get('/:id', { preHandler: [verifyJWT, attachUserHandler] }, userController.getUserById); 	// Rota para buscar usuário por ID
+
+	fastify.post('/', { preHandler: [verifyJWT, attachUserHandler] }, userController.addUser) 	// // Rota para criar um novo usuário
 	fastify.patch('/:id', { preHandler: [verifyJWT, attachUserHandler] }, userController.editUser)
 	fastify.delete('/:id', { preHandler: [verifyJWT, attachUserHandler] }, userController.delUser)
 
