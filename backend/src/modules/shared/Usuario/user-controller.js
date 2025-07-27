@@ -77,8 +77,6 @@ export const delUser = async (request, reply) => {
 
 export const listAllUsers = async (request, reply) => {
 	const { userLogged } = request;
-	console.log(userLogged);
-
 	const userService = makeUserService();
 	const { users } = await userService.findAllUsers();
 	success(reply, 200, {

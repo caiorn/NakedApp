@@ -18,12 +18,17 @@ export const config = {
 
 export const knex = knexConfig(config);
 
-// Exemplo de interceptor: log de todas as queries
-knex.on('query', (query) => {
-  console.debug('> SQL:', query.sql, query.bindings || '');
-});
-
-// Interceptor de erro
-knex.on('query-error', (error, obj) => {
-  console.error('! SQL Error:', error, obj.sql);
+(await import('./knex-interceptor.js')).setupKnexInterceptors(knex, {
+  enable: true,
+  options: {
+    errorsOnly: false,      // Log only errors SQL
+    logTypes: ['SELECT', 'INSERT', 'UPDATE', 'DELETE'], // Types of SQL commands to log
+    showFullSQL: false,     // false show only the operation (minify) type (e.g., SELECT, INSERT) in logs
+    beatifySQL: false,       // Format SQL queries for better readability
+    showResultTable: {
+      enabled: true,     // Show result table in logs
+      rowLimit: 5,
+      columnLimit: 5
+    },
+  }
 });

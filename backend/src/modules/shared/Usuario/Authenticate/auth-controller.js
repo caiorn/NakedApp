@@ -6,7 +6,6 @@ import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../../
 import { setRefreshTokenCookie, getSignedRefreshTokenValue ,clearRefreshTokenCookie} from '../../../../utils/cookie-refresh-token.js';
 import { success } from '../../../../utils/api-response.js';
 
-
 export async function authenticateUser(request, reply) {
     const validatedUser = authSchema.safeParse(request.body);
     if (!validatedUser.success) {

@@ -27,7 +27,7 @@ class CacheMemory {
     }
     const ttlMs = (ttlMin * 60 * 1000) || this.defaultTTLms;
     const expires = Date.now() + (ttlMs);
-    this.cache.set(key, { value, expires });
+  this.cache.set(key, { value, expires });
     console.log(`\x1b[32m[CacheMemory] Set key: "${key}" with TTL: ${ttlMs / 60 / 1000} m\x1b[0m`);
   }
 
