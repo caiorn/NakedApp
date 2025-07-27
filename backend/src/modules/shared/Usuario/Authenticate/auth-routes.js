@@ -1,9 +1,12 @@
-import { authenticateUser, getInfoToken } from "./auth-controller.js";
-import { verifyJWT } from '../../../../middlewares/verify-jwt.js';
+import { authenticateUser, getInfoToken, refreshToken } from "./auth-controller.js";
+import { authUserHandler } from '../../../../middlewares/auth-user-handler.js';
 
 export const authRoutes = async (fastify) => {
   fastify.post('/login', authenticateUser);
-  fastify.get('/token-info', { preHandler: verifyJWT }, getInfoToken);
+  fastify.post('/logout', { preHandler: authUserHandler }, getInfoToken);
+  fastify.post('/refresh', refreshToken);
+  fastify.post('/forgot-password', { preHandler: authUserHandler }, getInfoToken);
+  fastify.get('/token-info', { preHandler: authUserHandler }, getInfoToken);
   fastify.post('/register', async (request, reply) => {
     const { name, email, password } = request.body;
     // Logic to register user

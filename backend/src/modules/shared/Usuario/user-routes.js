@@ -1,6 +1,5 @@
 import * as userController from './user-controller.js'
-import { verifyJWT } from '../../../middlewares/verify-jwt.js';
-import { attachUserHandler } from '../../../middlewares/attach-user-handler.js';
+import { authUserHandler } from '../../../middlewares/auth-user-handler.js';
 
 export const userRoutes = async (fastify) => {
 	// funcao qye executa antes de cada rota de usuario (middleware global dentro do escopo do plugin)
@@ -20,13 +19,13 @@ export const userRoutes = async (fastify) => {
 			return { status: 'ok' };
 		});
 
-	fastify.get('/me', { preHandler: [verifyJWT, attachUserHandler] }, userController.getMe); 			// Rota para obter informações do usuário logad
-	fastify.get('/all', { preHandler: [verifyJWT, attachUserHandler] }, userController.listAllUsers); 	// Rota para buscar todos os usuários
-	fastify.get('/:id', { preHandler: [verifyJWT, attachUserHandler] }, userController.getUserById); 	// Rota para buscar usuário por ID
+	fastify.get('/me', { preHandler: authUserHandler }, userController.getMe); 			// Rota para obter informações do usuário logad
+	fastify.get('/all', { preHandler: authUserHandler }, userController.listAllUsers); 	// Rota para buscar todos os usuários
+	fastify.get('/:id', { preHandler: authUserHandler }, userController.getUserById); 	// Rota para buscar usuário por ID
 
-	fastify.post('/', { preHandler: [verifyJWT, attachUserHandler] }, userController.addUser) 	// // Rota para criar um novo usuário
-	fastify.patch('/:id', { preHandler: [verifyJWT, attachUserHandler] }, userController.editUser)
-	fastify.delete('/:id', { preHandler: [verifyJWT, attachUserHandler] }, userController.delUser)
+	fastify.post('/', { preHandler: authUserHandler }, userController.addUser) 	// // Rota para criar um novo usuário
+	fastify.patch('/:id', { preHandler: authUserHandler }, userController.editUser)
+	fastify.delete('/:id', { preHandler: authUserHandler }, userController.delUser)
 
 	// // Rota para atualizar usuário existente
 	// fastify.put('/:id', userController.updateUserController)

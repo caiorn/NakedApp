@@ -1,6 +1,6 @@
 import { ZodError } from 'zod';
 
-export class ValidationError extends Error {
+export class BadRequestError extends Error {
 	constructor(statusCode, message, source) {
 		super(message);
 		this.statusCode = statusCode;

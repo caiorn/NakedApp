@@ -4,9 +4,9 @@
     "module": "ESNext",          // Módulo do Node.js
     "moduleResolution": "node",    // Resolução de módulos para o Node
     "baseUrl": ".",                // Diretório base para resolver os caminhos dos arquivos
-    "paths": {
-      "@/*": ["src/*"]             // Alias para a pasta 'src' (opcional)
-    },
+    // "paths": {
+    //   "@/*": ["src/*"]             // Alias para a pasta 'src' (opcional)
+    // },
     "checkJs": true,               // Habilita checagem de erros de tipo no JavaScript
     "esModuleInterop": true,       // Permite importações do estilo 'import X from Y'
     "allowJs": true                // Permite arquivos JavaScript no projeto

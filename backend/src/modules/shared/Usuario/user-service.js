@@ -1,4 +1,4 @@
-import { AppError } from "../../../errors/AppError.js";
+import { NotFoundError, ConflictError } from "../../../errors/_errors.js";
 import { UserRepository } from "./user-repository.js";
 import { newUser } from "./user.schema.js";
 import bcrypt from "bcryptjs";
@@ -17,10 +17,10 @@ export class UserService {
 			columns: ["id", "login", "email"]
 		});
 		if (existingUser?.login === userData.login) {
-			throw new AppError(409, "User with this login already exists");
+			throw new ConflictError("User with this login already exists");
 		}
 		if (existingUser?.email === userData.email) {
-			throw new AppError(409, "User with this email already exists");
+			throw new ConflictError("User with this email already exists");
 		}
 
 		//gerando hash da senha
@@ -53,7 +53,7 @@ export class UserService {
 		}
 
 		if (duplicateErrors.length) {
-			throw new AppError(400, 'Duplicate fields in batch', duplicateErrors);
+			throw new ConflictError('Duplicate fields in batch', duplicateErrors);
 		}
 
 		// Verificar se já existem usuários com os login ou email no banco
@@ -74,7 +74,7 @@ export class UserService {
 				}
 				return conflicts;
 			});
-			throw new AppError(409, `Some users already exist`, conflictDetails);
+			throw new ConflictError(`Some users already exist`, conflictDetails);
 		}
 
 		// Gerar hash das senhas após validações
@@ -99,7 +99,7 @@ export class UserService {
 		const columns = ["id", "name", "login", "email", "phone"];
 		const [user] = await this.userRepository.selectUsersByIds({ ids: [id], columns });
 		if (!user) {
-			throw new AppError(404, "User not found");
+			throw new NotFoundError("User not found");
 		}
 		return { user };
 	}
@@ -109,7 +109,7 @@ export class UserService {
 		const columns = ["id", "name", "login", "email", "phone"];
 		const [user] = await this.userRepository.selectUsersByIds({ ids: [id], columns});
 		if (!user) {
-			throw new AppError(404, "User not found");
+			throw new NotFoundError("User not found");
 		}
 
 		// Verificar se já existe usuário com o login ou email
@@ -121,10 +121,10 @@ export class UserService {
 		
 		for (const existingUser of existingUsers) {
 			if (existingUser.login === userData.login && existingUser.id !== id) {
-				throw new AppError(409, "User with this login already exists");
+				throw new ConflictError("User with this login already exists");
 			}
 			if (existingUser.email === userData.email && existingUser.id !== id) {
-				throw new AppError(409, "User with this email already exists");
+				throw new ConflictError("User with this email already exists");
 			}
 		}
 		// Atualizar os dados do usuário
@@ -136,7 +136,7 @@ export class UserService {
 	async deleteUser(id) {
 		const [user] = await this.userRepository.selectUsersByIds({ ids: [id], columns: ["id"] });
 		if (!user) {
-			throw new AppError(404, "User not found");
+			throw new NotFoundError("User not found");
 		}
 		const affectedRows = await this.userRepository.destroyUsersSoftly([id]);
 		return affectedRows;

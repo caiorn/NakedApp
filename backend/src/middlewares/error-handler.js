@@ -1,34 +1,19 @@
-import { AppError } from '../errors/AppError.js'
-import { ZodError } from 'zod'
 import { env } from '../env.js'
-import { ValidationError } from '../errors/ValidationError.js'
+import { fail } from '../utils/api-response.js'
+import { BadRequestError } from '../errors/BadRequestError.js';
+import { AppError } from '../errors/AppError.js';
 
 export function errorHandler(error, request, reply) {
     try {
-        const errorResponse = {
-            success: false,
-            status: error.statusCode || 500,
-            message: error.message || 'Internal Server Error',
-            error: error.constructor.name
-        }
-
-        if (error instanceof ValidationError && error.issues) {
-            errorResponse.issues = error.issues
-        }else if (error instanceof AppError && error.issues) {
-            errorResponse.issues = error.issues
-        }else{
-            //se for um erro nao identificado/bug
+        //se não tiver em producao, incluir o origin na resposta
+        if (!(error instanceof BadRequestError || error instanceof AppError) && error.stack) {
             console.error(error.stack);
         }
-
-        errorResponse.path = request.url;
-        errorResponse.timestamp = new Date().toISOString();
-
-        //se não tiver em producao, incluir o origin na resposta
+        let origin;
         if (env.NODE_ENV !== 'production' && error.stack) {
             const stackLines = error.stack.split('\n');
             // Pega a primeira linha que esteja fora de node_modules e internal, e dentro do seu src
-            const origin = stackLines.find(line =>
+            origin = stackLines.find(line =>
                 line.includes('at ') &&
                 !line.includes('node_modules') &&
                 !line.includes('internal') &&
@@ -36,17 +21,21 @@ export function errorHandler(error, request, reply) {
             );
 
             if (origin) {
-                errorResponse.origin = origin.trim();
+                origin = origin.trim();
             }
         } else {
             // TODO: logar erro em serviço externo (Sentry, etc)
         }
 
-        reply.status(errorResponse.status).send(errorResponse);
+        fail(reply, error.statusCode, {
+            message: error.message,
+            error: error.constructor.name,
+            issues: error.issues,
+            origin
+        });
     } catch (error) {
         console.error('------------- error in error-handler.js------------')
         console.error(error.stack);
         reply.status(500).send("error-handler error");
-
     }
 }

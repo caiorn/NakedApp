@@ -31,7 +31,7 @@ export class UserRepository {
 	}
 
 	async destroyUsersSoftly(ids = []) {
-	
+
 		const affectedRows = await this.db("users")
 			.whereIn("id", ids)
 			.update({ deleted_at: this.db.fn.now() });
@@ -44,7 +44,7 @@ export class UserRepository {
 	}
 
 	async selectUsersByIds({ ids, columns = ["*"] }) {
-		await this.#simulateDelay(1000); // Simula um delay de 1 segundo
+		// await this.#simulateDelay(1000); // Simula um delay de 1 segundo
 		const users = await this.db("users")
 			.select(columns)
 			.whereIn("id", ids)

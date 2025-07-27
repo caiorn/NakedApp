@@ -17,13 +17,17 @@ if (existsSync(envPath)) {
 // Validação com Zod
 const envSchema = z.object({
   NODE_ENV: z.enum(['test', 'development' , 'production']),
-  HOST: z.string().default('localhost'),
+  HOST: z.string(),
   PORT: z.coerce.number(),
 
   DB_URL: z.string(),
 
-  JWT_SECRET: z.string(),
-  JWT_EXPIRATION: z.string().default('1d'),
+  JWT_ACCESS_SECRET: z.string(),
+  JWT_REFRESH_SECRET: z.string(),
+  JWT_ACCESS_EXPIRATION: z.string(),
+  JWT_REFRESH_EXPIRATION: z.string(),
+
+  COOKIE_SECRET: z.string(),
 
   SQLITE_DB_PATH: z.string().optional(),
 })
@@ -37,8 +41,10 @@ if (!parsed.success) {
   process.exit(1)
 }
 
-export const env = parsed.data
-
+export const env = {
+  ...parsed.data,
+  inProduction: parsed.data.NODE_ENV === 'production'
+};
 // 🖨️ Exibe variáveis no dev
 // if (env.NODE_ENV === 'development') {
   console.log('Variáveis de ambiente carregadas:', env)

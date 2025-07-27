@@ -1,10 +1,10 @@
 //import * as profileController from './profile-controller.js';
-import { verifyJWT } from '../../../../middlewares/verify-jwt.js';
+import { authUserHandler } from '../../../../middlewares/auth-user-handler.js';
 import { makeUserService } from "../user-service-factory.js";
 
 
 export const profileRoutes = async (fastify, options) => {
-    fastify.get('/me',{ onRequest: verifyJWT }, async (request, reply) => {
+    fastify.get('/me',{ onRequest: authUserHandler }, async (request, reply) => {
         const { sub : id} = request.user; // Assuming the user ID is in the JWT payload
 
         const userService = makeUserService();

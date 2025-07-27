@@ -1,4 +1,4 @@
-import { AppError } from "../../../../errors/AppError.js";
+import { AuthError, PermissionError,  } from "../../../../errors/_errors.js";
 import { UserRepository } from "../user-repository.js";
 import bcrypt from "bcryptjs";
 
@@ -16,17 +16,17 @@ export class AuthService {
 		});
 		
 		if (!user) {
-			throw new AppError(401, "Usúario não encontrado");
+			throw new AuthError("Usúario não encontrado");
 		}
 
 		const isPasswordValid = await bcrypt.compare(password, user.password);
 		if (!isPasswordValid) {
-			throw new AppError(401, "Senha Inválida");
+			throw new AuthError("Senha Inválida");
 			//log tentativa de acesso.. senha incorreta
 		}
 
 		if (user.status !== 'active') {
-			throw new AppError(403, "Acesso indisponível. Contate o seu supervisor.");
+			throw new PermissionError("Acesso indisponível. Contate o seu supervisor.");
 			//log tentativa de acesso.. status user
 		}
 

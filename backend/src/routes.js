@@ -1,7 +1,7 @@
 import { userRoutes } from './modules/shared/Usuario/user-routes.js'
 import { authRoutes } from './modules/shared/Usuario/Authenticate/auth-routes.js'
 import { profileRoutes } from './modules/shared/Usuario/Profile/profile-routes.js'
-import { verifyJWT } from './middlewares/verify-jwt.js'
+import { authUserHandler } from './middlewares/auth-user-handler.js'
 
 export async function appRoutes(fastify, options) {
     fastify.get('/', async (request, reply) => {
