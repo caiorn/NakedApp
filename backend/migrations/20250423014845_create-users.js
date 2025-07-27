@@ -20,6 +20,19 @@ export async function up(knex) {
     table.integer('deleted_by').references('id').inTable('users').onDelete('SET NULL').onUpdate('CASCADE');
   });
 
+  await knex.schema.createTable('sessions', (table) => {
+    table.increments('id').primary(); // Identificador primário
+    table.integer('user_id').notNullable();
+    table.text('refresh_tokens').notNullable();
+    table.text('user_agent');
+    table.text('ip_address');
+    table.datetime('expires_at').notNullable();
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('revoked_at').nullable(); 
+    
+    table.foreign('user_id').references('id').inTable('users').onDelete('CASCADE');
+  });
+
   // Exigido por SOX para rastrear alterações em dados sensíveis
   await knex.schema.createTable("_audit_logs_change", (table) => {
     table.increments("id").primary(); // Identificador primário

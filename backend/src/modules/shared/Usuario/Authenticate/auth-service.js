@@ -1,11 +1,16 @@
-import { AuthError, PermissionError,  } from "../../../../errors/_errors.js";
+import { AuthError, PermissionError, } from "../../../../errors/_errors.js";
 import { UserRepository } from "../user-repository.js";
+import { AuthRepository } from "./auth-repository.js";
 import bcrypt from "bcryptjs";
+import { randomUUID } from 'crypto'
+
 
 export class AuthService {
-	constructor(userRepository) {
+	constructor(userRepository, authRepository) {
 		/** @type {UserRepository} */
 		this.userRepository = userRepository;
+		/** @type {AuthRepository} */
+		this.authRepository = authRepository;
 		this.token = null;
 	}
 
@@ -14,7 +19,7 @@ export class AuthService {
 			login,
 			columns: ["id", "name", "password", "status", "avatar"]
 		});
-		
+
 		if (!user) {
 			throw new AuthError("Usúario não encontrado");
 		}
@@ -33,38 +38,66 @@ export class AuthService {
 		return { user };
 	}
 
-	async changePassword(userId, newPassword) {
-		// const user = await this.userRepository.getUserById(userId);
-		// if (!user) {
-		// 	throw new AppError("User not found", 404);
-		// }
+	async createRefreshToken(userId, userAgent, ipAddress) {
+		const refreshToken = randomUUID(); // ou JWT se preferir
+		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 dias
 
-		// const hashedPassword = await bcrypt.hash(newPassword, 8);
-		// await this.userRepository.updateUserPassword(userId, hashedPassword);
-		// return { message: "Password changed successfully" };
+		const token = {
+			userId: userId,
+			token: refreshToken,
+			expiresAt,
+			userAgent,
+			ipAddress,
+		};
+
+		const [insertedToken] = await this.authRepository.insertRefreshToken(token);
+		return { id: insertedToken.id, ...token  };
 	}
+
+    async deleteByToken(refreshToken) {
+        const result =  await this.authRepository.destroyRefreshToken(refreshToken);
+		if (result === 0) {
+			throw new AuthError("Refresh token não encontrado ou já removido");
+		}
+    }
+
+	async findSessionByToken(token) {
+		const [session] = await this.authRepository.selectRefreshTokenByToken({ token });
+		return session;
+	}
+
+	async changePassword(userId, newPassword) {
+			// const user = await this.userRepository.getUserById(userId);
+			// if (!user) {
+			// 	throw new AppError("User not found", 404);
+			// }
+
+			// const hashedPassword = await bcrypt.hash(newPassword, 8);
+			// await this.userRepository.updateUserPassword(userId, hashedPassword);
+			// return { message: "Password changed successfully" };
+		}
 
 	async resetPassword(userId, newPassword) {
-		// const user = await this.userRepository.getUserById(userId);
-		// if (!user) {
-		// 	throw new AppError("User not found", 404);
-		// }
+			// const user = await this.userRepository.getUserById(userId);
+			// if (!user) {
+			// 	throw new AppError("User not found", 404);
+			// }
 
-		// const hashedPassword = await bcrypt.hash(newPassword, 8);
-		// await this.userRepository.updateUserPassword(userId, hashedPassword);
-		// return { message: "Password reset successfully" };
+			// const hashedPassword = await bcrypt.hash(newPassword, 8);
+			// await this.userRepository.updateUserPassword(userId, hashedPassword);
+			// return { message: "Password reset successfully" };
+		}
+
+
+		setToken(token) {
+			this.token = token;
+		}
+
+		getToken() {
+			return this.token;
+		}
+
+		isAuthenticated() {
+			return !!this.token;
+		}
 	}
-
-
-	setToken(token) {
-		this.token = token;
-	}
-
-	getToken() {
-		return this.token;
-	}
-
-	isAuthenticated() {
-		return !!this.token;
-	}
-}
