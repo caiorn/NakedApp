@@ -1,6 +1,7 @@
 import { env } from '../env.js';
 import { parseExpirationToSeconds } from "./parse-time.js";
 import { TokenExpiredError } from '../errors/TokenExpiredError.js';
+import { scramble, unscramble } from './str-obfuscate.js';
 
 const _REFRESH_TOKEN_COOKIE = 'refresh_token';
 
@@ -15,7 +16,8 @@ const _refreshTokenCookieOptions = {
 
 // Define o cookie de refresh token na resposta
 export function setRefreshTokenCookie(reply, token) {
-    reply.setCookie(_REFRESH_TOKEN_COOKIE, token, _refreshTokenCookieOptions);
+    const scrambledToken = scramble(token);
+    reply.setCookie(_REFRESH_TOKEN_COOKIE, scrambledToken, _refreshTokenCookieOptions);
 }
 
 // Limpa o cookie de refresh token na resposta
@@ -33,7 +35,8 @@ export function getSignedRefreshTokenValue(request) {
     if (!tokenIsValid) {
         throw new TokenExpiredError(`Refresh token inválido.`);
     }
-    return tokenValue;
+    const unscrambledToken = unscramble(tokenValue);
+    return unscrambledToken;
 }
 
 

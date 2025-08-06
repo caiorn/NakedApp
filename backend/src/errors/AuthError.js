@@ -1,9 +1,7 @@
-export class AuthError extends Error {
+import { BaseError } from './BaseError.js'
+
+export class AuthError extends BaseError {
   constructor(message = "Erro de autenticação", issues) {
-    super(message);
-    this.name = "AuthError";
-    this.statusCode = 401;
-    this.issues = issues && (Array.isArray(issues) ? issues : [issues]);
-    Error.captureStackTrace?.(this, this.constructor);
+    super(message, 401, issues);
   }
 }

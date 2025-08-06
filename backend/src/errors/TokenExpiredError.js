@@ -1,7 +1,7 @@
-export class TokenExpiredError extends Error {
+import { BaseError } from './BaseError.js'
+
+export class TokenExpiredError extends BaseError {
   constructor(message = "Token expirado") {
-    super(message);
-    this.name = "TokenExpiredError";
-    this.statusCode = 401;
+    super(message, 401, null);
   }
 }

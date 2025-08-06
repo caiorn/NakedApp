@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import { env } from "../env.js";
-import { TokenExpiredError, AuthError } from '../errors/_errors.js'
+import { TokenExpiredError, AuthError } from '../errors/all-errors.js'
 export function signAccessToken(userId) {
     const payload = { sub: userId };
     // @ts-ignore

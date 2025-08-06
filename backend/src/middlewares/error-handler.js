@@ -1,14 +1,14 @@
 import { env } from '../env.js'
 import { fail } from '../utils/api-response.js'
-import { BadRequestError } from '../errors/BadRequestError.js';
-import { AppError } from '../errors/AppError.js';
+import { BaseError } from '../errors/BaseError.js';
 
 export function errorHandler(error, request, reply) {
     try {
-        //se não tiver em producao, incluir o origin na resposta
-        if (!(error instanceof BadRequestError || error instanceof AppError) && error.stack) {
+        // se não for uma instância de BaseError
+        if (!(error instanceof BaseError) && error.stack) {
             console.error(error.stack);
         }
+        //se não tiver em producao, incluir o origin na resposta
         let origin;
         if (env.NODE_ENV !== 'production' && error.stack) {
             const stackLines = error.stack.split('\n');

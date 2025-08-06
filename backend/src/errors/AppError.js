@@ -1,3 +1,4 @@
+import { BaseError } from './BaseError.js'
 /*
 	Ao chamar new AppError sempre passar o statusCode, evite deixar o padrão 422.
 	código HTTP 422 indica que o servidor entende o tipo de conteúdo da solicitação 
@@ -6,11 +7,8 @@
 	diferenciar do status code 500 para somente ser usado erros desconhecidos.
 */
 
-export class AppError extends Error {
+export class AppError extends BaseError {
 	constructor(statusCode = 422, message = 'An error occurred', issues) {
-		super(message)
-		this.statusCode = statusCode
-		this.issues = issues && (Array.isArray(issues) ? issues : [issues] )
-		Error.captureStackTrace?.(this, this.constructor)
+		super(message, statusCode, issues)
 	}
 }

@@ -1,4 +1,4 @@
-import { NotFoundError, ConflictError } from "../../../errors/_errors.js";
+import { NotFoundError, ConflictError } from "../../../errors/all-errors.js";
 import { UserRepository } from "./user-repository.js";
 import { newUser } from "./user.schema.js";
 import bcrypt from "bcryptjs";

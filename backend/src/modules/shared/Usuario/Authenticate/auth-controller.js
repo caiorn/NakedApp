@@ -2,7 +2,7 @@ import { UserRepository } from '../user-repository.js';
 import { AuthRepository } from './auth-repository.js';
 import { authSchema } from './auth-schema.js'
 import { AuthService } from './auth-service.js';
-import { BadRequestError, TokenExpiredError } from '../../../../errors/_errors.js';
+import { BadRequestError, TokenExpiredError } from '../../../../errors/all-errors.js';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../../../utils/jwt.js';
 import { setRefreshTokenCookie, getSignedRefreshTokenValue, clearRefreshTokenCookie } from '../../../../utils/cookie-refresh-token.js';
 import { success } from '../../../../utils/api-response.js';

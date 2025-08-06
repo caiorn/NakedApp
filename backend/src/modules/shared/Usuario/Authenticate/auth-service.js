@@ -1,4 +1,4 @@
-import { AuthError, PermissionError, } from "../../../../errors/_errors.js";
+import { AuthError, PermissionError, } from "../../../../errors/all-errors.js";
 import { UserRepository } from "../user-repository.js";
 import { AuthRepository } from "./auth-repository.js";
 import bcrypt from "bcryptjs";

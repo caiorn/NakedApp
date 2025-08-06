@@ -1,9 +1,7 @@
-export class DatabaseError extends Error {
+import { BaseError } from './BaseError.js';
+
+export class DatabaseError extends BaseError {
   constructor(message = "Erro de banco de dados", issues) {
-    super(message);
-    this.name = "DatabaseError";
-    this.statusCode = 500;
-    this.issues = issues && (Array.isArray(issues) ? issues : [issues]);
-    Error.captureStackTrace?.(this, this.constructor);
+    super(message, 500, issues);
   }
 }

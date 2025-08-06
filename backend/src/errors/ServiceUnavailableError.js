@@ -1,9 +1,7 @@
-export class ServiceUnavailableError extends Error {
+import { BaseError } from './BaseError.js';
+
+export class ServiceUnavailableError extends BaseError {
   constructor(message = "Serviço indisponível", issues) {
-    super(message);
-    this.name = "ServiceUnavailableError";
-    this.statusCode = 503;
-    this.issues = issues && (Array.isArray(issues) ? issues : [issues]);
-    Error.captureStackTrace?.(this, this.constructor);
+    super(message, 503, issues);
   }
-}
+} 

@@ -1,4 +1,4 @@
-import { UnauthorizedError, NotFoundError, PermissionError} from "../errors/_errors.js";
+import { UnauthorizedError, NotFoundError, PermissionError} from "../errors/all-errors.js";
 import { verifyAccessToken } from '../utils/jwt.js';
 import { cacheMemory, CacheKeys } from "../utils/cache-memory.js";
 import { UserRepository } from "../modules/shared/Usuario/user-repository.js";
@@ -8,7 +8,6 @@ import { UserRepository } from "../modules/shared/Usuario/user-repository.js";
  * Após validação, busca o usuário correspondente na base de dados (com cache em memória) e atribui ao request.
  */
 export async function authUserHandler(request, reply) {
-    // const token = request.cookies.sessionId
     // Assuming Bearer token format
     const accessToken = request.headers.authorization?.split(' ')[1];
 

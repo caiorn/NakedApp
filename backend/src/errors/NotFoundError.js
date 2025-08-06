@@ -1,9 +1,7 @@
-export class NotFoundError extends Error {
+import { BaseError } from './BaseError.js';
+
+export class NotFoundError extends BaseError {
   constructor(message = "Recurso não encontrado", issues) {
-    super(message);
-    this.name = "NotFoundError";
-    this.statusCode = 404;
-    this.issues = issues && (Array.isArray(issues) ? issues : [issues]);
-    Error.captureStackTrace?.(this, this.constructor);
+    super(message, 404, issues);
   }
 }

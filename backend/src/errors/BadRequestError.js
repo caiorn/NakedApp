@@ -1,9 +1,9 @@
 import { ZodError } from 'zod';
+import { BaseError } from './BaseError.js'
 
-export class BadRequestError extends Error {
-	constructor(statusCode, message, source) {
-		super(message);
-		this.statusCode = statusCode;
+export class BadRequestError extends BaseError {
+	constructor(statusCode = 400, message, source) {
+		super(message, statusCode);
 
 		// Se vier de um safeParse (objeto com error), extrai de .error
 		const zodError = source?.error instanceof ZodError ? source.error : null;
