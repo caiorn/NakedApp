@@ -1,2 +1,2 @@
-import { config } from './src/db/knex-db.js';
+import { config } from './src/db/knex-db.ts';
 export default config;

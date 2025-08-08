@@ -1,8 +1,8 @@
 import { vitest , it, expect, describe, beforeEach} from "vitest";
-import { InMemoryUserRepository } from "../../src/modules/shared/Usuario/user-repository-in-memory.js";
-import { UserService } from "../../src/modules/shared/Usuario/user-service.js";
-import { compare } from "bcryptjs";
-import { AppError, AppError2 } from "../../src/errors/AppError.js";
+import { InMemoryUserRepository } from "../../src/modules/shared/Usuario/user-repository-in-memory.ts";
+import { UserService } from "../../src/modules/shared/Usuario/user-service.ts";
+import { compare } from "bcryptts";
+import { AppError, AppError2 } from "../../src/errors/AppError.ts";
 
 let userRepository;  
 let sut;

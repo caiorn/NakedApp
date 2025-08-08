@@ -1,6 +1,6 @@
 import { it, expect, describe} from "vitest";
-import { InMemoryUserRepository } from "../../src/modules/shared/Usuario/user-repository-in-memory.js";
-import { AuthService } from "../../src/modules/shared/Usuario/Authenticate/auth-service.js";
+import { InMemoryUserRepository } from "../../src/modules/shared/Usuario/user-repository-in-memory.ts";
+import { AuthService } from "../../src/modules/shared/Usuario/Authenticate/auth-service.ts";
 import  bcrypt from "bcryptjs";
 
 describe('Autenticação', () => {

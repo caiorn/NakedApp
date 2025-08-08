@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { knex } from '../../src/db/knex-db.js';
+import { knex } from '../../src/db/knex-db.ts';
 
 const createMockUser = (index) => {
   const name = faker.person.fullName();
