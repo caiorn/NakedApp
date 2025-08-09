@@ -114,6 +114,8 @@ export class UserService {
 			ids: [id],
 			columns: ["id", "name", "login", "email", "phone"]
 		});
+
+
 		if (!user) {
 			throw new NotFoundError("User not found");
 		}
@@ -139,6 +141,7 @@ export class UserService {
 		});
 
 		for (const existingUser of existingUsers) {
+			
 			if (existingUser.login === userData.login && existingUser.id !== id) {
 				throw new ConflictError("User with this login already exists");
 			}

@@ -90,6 +90,7 @@ export {
     updateUserSchema,
 };
 
+
 // Types de referência
 export type User = z.infer<typeof userSchema>;
 export type UserColumn = keyof User | '*';
