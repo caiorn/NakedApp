@@ -1,5 +1,5 @@
 import type { Knex } from "knex";
-import type { User, UserColumn, InsertUser, UpdateUser } from "./user.types.ts";
+import type { User, UserColumn, InsertUser, UpdateUser } from "./user.schema.ts";
 import { knex } from "../../../db/knex-db.ts";
 
 export class UserRepository {

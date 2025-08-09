@@ -1,4 +1,4 @@
-import type { NewUser, NewUsers, EditUser, EditUserProfile } from "./user.schema.ts";
+import type { InsertUser, NewUser, EditUser, EditUserProfile } from "./user.schema.ts";
 import type { UserLogged } from "../../../types/UserLogged.ts";
 
 import { NotFoundError, ConflictError } from "../../../errors/all-errors.ts";
@@ -37,7 +37,7 @@ export class UserService {
 		return insertedUser;
 	}
 
-	async createUserBatch(usersData: NewUsers, userLogged: UserLogged) {
+	async createUserBatch(usersData: NewUser[], userLogged: UserLogged) {
 		// Verificar se há campos duplicados dentro do próprio array
 		const logins: string[] = [];
 		const emails: string[] = [];
@@ -91,7 +91,7 @@ export class UserService {
 		}
 
 		// Gerar hash das senhas após validações
-		const usersWithHashedPasswords: Array<NewUser & { created_by: number }> = await Promise.all(
+		const usersWithHashedPasswords: Array<InsertUser> = await Promise.all(
 			usersData.map(async (user) => {
 				const salt = await bcrypt.genSalt(10);
 				const hashedPassword = await bcrypt.hash(user.password, salt);
