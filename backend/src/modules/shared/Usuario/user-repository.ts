@@ -1,5 +1,5 @@
 import type { Knex } from "knex";
-import type { InsertUser, UpdateUser } from "./user.schema.ts";
+import type { User, UserColumn, InsertUser, UpdateUser } from "./user.types.ts";
 import { knex } from "../../../db/knex-db.ts";
 
 export class UserRepository {
@@ -13,6 +13,7 @@ export class UserRepository {
 	}
 
 	async insertUsers(users: InsertUser | InsertUser[]) {
+		
 		// PostgreSQL: descomente essa linha se estiver usando Postgres
 		const insertedUsers = await this.db("users").insert(users).returning('id');
 
@@ -34,7 +35,6 @@ export class UserRepository {
 	}
 
 	async destroyUsersSoftly(ids: number[]) {
-
 		const affectedRows = await this.db("users")
 			.whereIn("id", ids)
 			.update({ deleted_at: this.db.fn.now() });
@@ -42,41 +42,44 @@ export class UserRepository {
 	}
 
 	async selectAllUsers({ columns = ["*"] }) {
-		const users = await this.db("users").select(columns).whereNull('deleted_at');
+		const users: Partial<User>[] = await this.db("users").select(columns).whereNull('deleted_at');
 		return users;
 	}
 
-	async selectUsersByIds({ ids, columns = ["*"] }: { ids: number[]; columns?: string[] }) {
+	async selectUsersByIds({ ids, columns = ["*"] }: { ids: number[]; columns?: UserColumn[] }) {
 		// await this.#simulateDelay(1000); // Simula um delay de 1 segundo
-		const users = await this.db("users")
-			.select(columns)
+		const users: Partial<User>[] = await this.db<Partial<User>>("users")
+			.select(...columns)
 			.whereIn("id", ids)
 			.whereNull("deleted_at");
 		return users;
 	}
 
-	async selectUsersLikeName({ name, columns = ["*"] }: { name: string; columns?: string[] }) {
-		const users = await this.db("users")
+	async selectUsersLikeName({ name, columns = ["*"] }: { name: string; columns?: UserColumn[] }) {
+		const users: Partial<User>[] = await this.db("users")
 			.select(columns)
 			.whereLike("name", `%${name}%`)
 			.whereNull("deleted_at");
 		return users;
 	}
 
-	async selectUserByLogin({ login, columns = ["*"] }: { login: string; columns?: string[] }) {
-		const users = await this.db("users").select(columns).where({ login }).first();
-		return users;
+	async selectUserByLogin({ login, columns = ["*"] }: { login: string; columns?: UserColumn[] }) {
+		const user: Partial<User> = await this.db("users")
+			.select(columns)
+			.where({ login })
+			.first();
+		return user;
 	}
 
 	async selectUsersByUniqueFields({
 		logins,
 		emails,
 		columns = ["*"]
-	}: { logins: string[]; emails: string[]; columns?: string[] }) {
+	}: { logins: string[]; emails: string[]; columns?: UserColumn[] }) {
 		if (logins.length === 0 && emails.length === 0) {
 			return [];
 		}
-		const users = this.db("users")
+		const users: Partial<User>[] = await this.db("users")
 			.select(columns)
 			.whereIn("login", logins)
 			.orWhereIn("email", emails)

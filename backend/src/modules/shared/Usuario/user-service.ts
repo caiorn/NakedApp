@@ -1,5 +1,5 @@
-import type { NewUser, NewUsers, EditUser, UpdateUser, EditUserProfile  } from "./user.schema.ts";
-import type { UserLogged  } from "../../../types/UserLogged.ts";	
+import type { NewUser, NewUsers, EditUser, EditUserProfile } from "./user.schema.ts";
+import type { UserLogged } from "../../../types/UserLogged.ts";
 
 import { NotFoundError, ConflictError } from "../../../errors/all-errors.ts";
 import { UserRepository } from "./user-repository.ts";
@@ -7,11 +7,11 @@ import bcrypt from "bcryptjs";
 
 export class UserService {
 	private userRepository: UserRepository;
-	constructor(userRepository : UserRepository) {
+	constructor(userRepository: UserRepository) {
 		this.userRepository = userRepository;
 	}
 
-	async createUser(userData : NewUser, userLogged : UserLogged) {
+	async createUser(userData: NewUser, userLogged: UserLogged) {
 		//verificar ja existe usuario com o lofin ou email		
 		const [existingUser] = await this.userRepository.selectUsersByUniqueFields({
 			logins: [userData.login],
@@ -28,16 +28,16 @@ export class UserService {
 		//gerando hash da senha
 		const salt = await bcrypt.genSalt(10);
 		const hashedPassword = await bcrypt.hash(userData.password, salt);
-		const updatedUserData = { 
-			...userData, 
+		const updatedUserData = {
+			...userData,
 			password: hashedPassword,
-			created_by: userLogged.id 
+			created_by: userLogged.id
 		};
 		const [insertedUser] = await this.userRepository.insertUsers(updatedUserData);
 		return insertedUser;
 	}
 
-	async createUserBatch(usersData : NewUsers, userLogged : UserLogged) {
+	async createUserBatch(usersData: NewUsers, userLogged: UserLogged) {
 		// Verificar se há campos duplicados dentro do próprio array
 		const logins: string[] = [];
 		const emails: string[] = [];
@@ -70,17 +70,22 @@ export class UserService {
 			emails,
 			columns: ["id", "login", "email"]
 		});
-
 		if (existingUsers.length > 0) {
-			const conflictDetails = existingUsers.flatMap(user => {
-				const conflicts: { field: string; message: string }[] = [];
-				if (logins.includes(user.login)) {
-					conflicts.push({ field: "login", message: `User with login ${user.login} already exists` });
+			const conflictDetails = existingUsers.map(user => {
+				const fields: string[] = [];
+				const messages: string[] = [];
+				if (user.login && logins.includes(user.login)) {
+					fields.push("login");
+					messages.push(`login ${user.login}`);
 				}
-				if (emails.includes(user.email)) {
-					conflicts.push({ field: "email", message: `User with email ${user.email} already exists` });
+				if (user.email && emails.includes(user.email)) {
+					fields.push("email");
+					messages.push(`email ${user.email}`);
 				}
-				return conflicts;
+				return {
+					field: fields.join(" and "),
+					message: `User with ${messages.join(" and ")} already exists`
+				};
 			});
 			throw new ConflictError(`Some users already exist`, conflictDetails);
 		}
@@ -104,19 +109,24 @@ export class UserService {
 		return { users };
 	}
 
-	async findUserById(id : number) {
-		const columns = ["id", "name", "login", "email", "phone"];
-		const [user] = await this.userRepository.selectUsersByIds({ ids: [id], columns });
+	async findUserById(id: number) {
+		const [user] = await this.userRepository.selectUsersByIds({
+			ids: [id],
+			columns: ["id", "name", "login", "email", "phone"]
+		});
 		if (!user) {
 			throw new NotFoundError("User not found");
 		}
+
 		return { user };
 	}
 
-	async changeUser(id : number, userData : EditUser, userLogged : UserLogged) {
+	async changeUser(id: number, userData: EditUser, userLogged: UserLogged) {
 		// Validar se o usuário existe
-		const columns = ["id", "name", "login", "email", "phone"];
-		const [user] = await this.userRepository.selectUsersByIds({ ids: [id], columns});
+		const [user] = await this.userRepository.selectUsersByIds({
+			ids: [id],
+			columns: ["id", "name", "login", "email", "phone"]
+		});
 		if (!user) {
 			throw new NotFoundError("User not found");
 		}
@@ -127,7 +137,7 @@ export class UserService {
 			emails: userData.email ? [userData.email] : [],
 			columns: ["id", "login", "email"]
 		});
-		
+
 		for (const existingUser of existingUsers) {
 			if (existingUser.login === userData.login && existingUser.id !== id) {
 				throw new ConflictError("User with this login already exists");
@@ -137,7 +147,7 @@ export class UserService {
 			}
 		}
 		// Atualizar os dados do usuário
-		const updatedUserData: UpdateUser = {
+		const updatedUserData = {
 			...userData,
 			updated_by: userLogged.id
 		};
@@ -147,7 +157,7 @@ export class UserService {
 		// return updatedUser;
 	}
 
-	async deleteUser(id : number) {
+	async deleteUser(id: number) {
 		const [user] = await this.userRepository.selectUsersByIds({ ids: [id], columns: ["id"] });
 		if (!user) {
 			throw new NotFoundError("User not found");

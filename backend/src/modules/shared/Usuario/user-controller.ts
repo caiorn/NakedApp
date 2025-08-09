@@ -1,4 +1,5 @@
-import type { FastifyRequest, FastifyReply } from "fastify"; import * as userSchema from "./user.schema.ts";
+import type { FastifyRequest, FastifyReply } from "fastify"; 
+import * as userSchema from "./user.schema.ts";
 import { makeUserService } from "./user-service-factory.ts";
 import { BadRequestError } from "../../../errors/BadRequestError.ts";
 import { cacheMemory, CacheKeys } from "../../../utils/cache-memory.ts";
@@ -94,8 +95,11 @@ export const getMe = async (request: FastifyRequest, reply: FastifyReply) => {
 
 export const getUserById = async (request: FastifyRequest<{ Params: { id: string } }>, reply: FastifyReply) => {
 	const userService = makeUserService();
-	const { id } = request.params;
-	const { user } = await userService.findUserById(id);
+	const userToSearchID = Number(request.params.id);
+	if (!Number.isInteger(userToSearchID) || userToSearchID <= 0) {
+		throw new BadRequestError(400, "ID do usuário deve ser um número inteiro positivo.", request.params.id);
+	}
+	const { user } = await userService.findUserById(userToSearchID);
 	reply.success(200, {
 		data: user
 	});

@@ -1,3 +1,4 @@
+import type { FastifyRequest, FastifyReply } from "fastify"; 
 import { UnauthorizedError, NotFoundError, PermissionError} from "../errors/all-errors.ts";
 import { verifyAccessToken } from '../utils/jwt.ts';
 import { cacheMemory, CacheKeys } from "../utils/cache-memory.ts";
@@ -7,7 +8,7 @@ import { UserRepository } from "../modules/shared/Usuario/user-repository.ts";
  * Valida o JWT presente no header Authorization da requisição, verifica se o token é válido e não expirado.
  * Após validação, busca o usuário correspondente na base de dados (com cache em memória) e atribui ao request.
  */
-export async function authUserHandler(request, reply) {
+export async function authUserHandler(request : FastifyRequest, reply: FastifyReply) {
     // Assuming Bearer token format
     const accessToken = request.headers.authorization?.split(' ')[1];
 
@@ -36,10 +37,8 @@ export async function authUserHandler(request, reply) {
         if(!user.status || user.status !== 'active') {
             throw new PermissionError("Usuario não está ativo");
         }
-
         cacheMemory.set(CacheKeys.USER(userId), user, 1);
     }
 
-    request.userLogged = user;
-    request.userLogged.payload = payloadDecoded;
+    request.userLogged = { ...user, payload: payloadDecoded };
 }
