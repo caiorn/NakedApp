@@ -1,8 +1,9 @@
-import type { Knex } from "knex";
 import type { User, UserColumn, InsertUser, UpdateUser } from "./user.entity.ts";
+import type { Knex } from "knex";
+import type { IUserRepository  } from "./user-repository-interface.ts";
 import { knex } from "../../../db/knex-db.ts";
 
-export class UserRepository {
+export class UserRepository implements IUserRepository {
 	private db: Knex | Knex.Transaction;
 
 	constructor(trxKnex?: Knex.Transaction) {
