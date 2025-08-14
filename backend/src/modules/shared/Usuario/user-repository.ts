@@ -1,5 +1,5 @@
 import type { Knex } from "knex";
-import type { User, UserColumn, InsertUser, UpdateUser } from "./user.types.ts";
+import type { User, UserColumn, InsertUser, UpdateUser } from "./user.entity.ts";
 import { knex } from "../../../db/knex-db.ts";
 
 export class UserRepository {
@@ -12,10 +12,17 @@ export class UserRepository {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
-	async insertUsers(users: InsertUser | InsertUser[]) {
-
+	async insertUsers<T extends readonly UserColumn[]>({
+		users,
+		returning = ["id"] as unknown as T
+	}: {
+		users: InsertUser | InsertUser[];
+		returning?: T;
+	}): Promise<Pick<User, T[number]>[]> {
 		// PostgreSQL: descomente essa linha se estiver usando Postgres
-		const insertedUsers = await this.db("users").insert(users).returning('id');
+		const insertedUsers = await this.db<User>("users")
+			.insert(users)
+			.returning(returning);
 
 		// // MySQL: retorna apenas o primeiro ID inserido (auto-increment)
 		// const [insertedId] = await this.db("users").insert(users);
@@ -24,14 +31,24 @@ export class UserRepository {
 		// 	? users.map((_, index) => ({ id: insertedId + index })) // simula múltiplos IDs
 		// 	: [{ id: insertedId }];
 
-		return insertedUsers;
+		return insertedUsers as Pick<User, T[number]>[];
 	}
 
-	async updateUsersByIds(ids: number[], userData: UpdateUser) {
-		const affectedRows = await this.db("users")
+	async updateUsersByIds<T extends readonly UserColumn[]>({
+		ids,
+		userData,
+		returning
+	}: {
+		ids: number[];
+		userData: UpdateUser;
+		returning: T;
+	}): Promise<Pick<User, T[number]>[]> {
+		const updatedUsers = await this.db<User>("users")
 			.whereIn("id", ids)
-			.update(userData);
-		return affectedRows;
+			.update(userData)
+			.returning(returning);
+
+		return updatedUsers as Pick<User, T[number]>[];
 	}
 
 	async destroyUsersSoftly(ids: number[]) {
@@ -42,9 +59,9 @@ export class UserRepository {
 	}
 
 	async selectAllUsers<T extends readonly UserColumn[]>({
-		columns
+		columns  // = ["*"] as unknown as T, 
 	}: {
-		columns: T;
+		columns: T; //	columns?: T;
 	}): Promise<Pick<User, T[number]>[]> {
 		const users = await this.db<User>("users")
 			.select(...columns)
@@ -57,7 +74,7 @@ export class UserRepository {
 		columns
 	}: {
 		ids: number[];
-		columns: T; // ✅ Torne obrigatório para evitar problemas com "*"
+		columns: T; //
 	}): Promise<Pick<User, T[number]>[]> {
 		const users = await this.db<User>("users")
 			.select(...columns)
@@ -68,21 +85,34 @@ export class UserRepository {
 	}
 
 
-	async selectUsersLikeName({ name, columns }: { name: string; columns: UserColumn[] }) {
-		const users: Partial<User>[] = await this.db("users")
-			.select(columns)
+	async selectUsersLikeName<T extends readonly UserColumn[]>({
+		name,
+		columns
+	}: {
+		name: string;
+		columns: T;
+	}): Promise<Pick<User, T[number]>[]> {
+		const users = await this.db<User>("users")
+			.select(...columns)
 			.whereLike("name", `%${name}%`)
 			.whereNull("deleted_at");
-		return users;
+		return users as Pick<User, T[number]>[];
 	}
 
-	async selectUserByLogin({ login, columns }: { login: string; columns: UserColumn[] }) {
-		const user: Partial<User> = await this.db("users")
-			.select(columns)
+	async selectUserByLogin<T extends readonly UserColumn[]>({
+		login,
+		columns
+	}: {
+		login: string;
+		columns: T;
+	}): Promise<Pick<User, T[number]> | undefined> {
+		const user = await this.db<User>("users")
+			.select(...columns)
 			.where({ login })
+			.whereNull("deleted_at")
 			.first();
-			
-		return user;
+
+		return user as Pick<User, T[number]> | undefined;
 	}
 
 	async selectUsersByUniqueFields<T extends readonly UserColumn[]>({

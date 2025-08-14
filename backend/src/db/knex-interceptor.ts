@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* Este arquivo contém interceptores para o Knex.ts 
 que permitem o registro detalhado de consultas SQL, 
 incluindo tempo de execução, tipo de operação e informações 
@@ -84,7 +85,7 @@ export function setupKnexInterceptors(knex, { enable, options }) {
         const ms = duration.toFixed(0);
         const timeColor = getTimeColor(duration);
         const resetColor = '\x1b[0m';
-        const formattedQuery = showFullSQL ? '\n' + formatQueryWithValuesColors(queryData.sql, queryData.bindings) : '' ;
+        const formattedQuery = showFullSQL ? '\n' + formatQueryWithValuesColors(queryData.sql, queryData.bindings) : '';
 
         let additionalInfo = '';
 
@@ -95,26 +96,25 @@ export function setupKnexInterceptors(knex, { enable, options }) {
             if (rowCount === 1 && columnCount === 1) {
                 const value = rows[0][Object.keys(rows[0])[0]];
                 const truncatedValue = typeof value === 'string' && value.length > 20 ? value.substring(0, 20) + '...' : value;
-                additionalInfo = `SELECT [Rows: ${rowCount}, Columns: ${columnCount}, Value: ${truncatedValue}]`;
+                additionalInfo = `[Rows: ${rowCount}, Columns: ${columnCount}, Value: ${truncatedValue}]`;
             } else {
-                additionalInfo = `SELECT [Rows: ${rowCount}, Columns: ${columnCount}]`;
+                additionalInfo = `[Rows: ${rowCount}, Columns: ${columnCount}]`;
             }
-        } else if (type === 'INSERT') {
-            const insertedId = Array.isArray(response) && response.length > 0 ? response[0]?.insertId || response[0] : null;
-            const count = response[0]?.affectedRows > 1 ? ` Count: ${response[0]?.affectedRows}` : '0';
-            additionalInfo = `INSERT [New ID: ${insertedId}${count}]`;
-        } else if (type === 'UPDATE' || type === 'DELETE') {
-            const count = response?.[0]?.affectedRows || response?.affectedRows || response || 0;
-            additionalInfo = `${type} [Rows Affected: ${count}]`;
+        } else if (type === 'INSERT' || type === 'UPDATE' || type === 'DELETE') {
+            const isReturning = queryData.returning && Array.isArray(queryData.response) && typeof queryData.response[0] === 'object';
+            let detailsInfo = isReturning
+                ? `[Affected: ${queryData.response.length} Returning Columns:${queryData.returning.length}]`
+                : `${JSON.stringify(queryData.response) || null}`;
+            additionalInfo = `${detailsInfo}`;
         }
 
-        const tablename = extractTableName(queryData.sql);
-        if (tablename) additionalInfo += ` \x1b[35m${tablename}\x1b[0m`;
-        additionalInfo += queryData.method === 'raw' ? '\x1b[33m raw\x1b[0m' : '';
+        const tablename = `\x1b[35m${extractTableName(queryData.sql) || 'unknown'}\x1b[0m`;
+        const modeInfo = queryData.method === 'raw' ? '\x1b[33m raw\x1b[0m' : '';
 
         const now = new Date();
         const timeStr = now.toTimeString().split(' ')[0]; // hh:mm:ss
-        console.log(`${timeColor}[${timeStr}] ${ms}ms ${additionalInfo} ${resetColor} ${formattedQuery}`);
+        console.log(`${timeColor}[${timeStr}] ${ms}ms ${type}${resetColor} ${tablename} ${modeInfo}${timeColor}${additionalInfo}${resetColor} ${formattedQuery}`);
+
     }
 
     function extractTableName(sql) {
@@ -144,8 +144,8 @@ export function setupKnexInterceptors(knex, { enable, options }) {
             const queryType = logTypes.find(type => upperSql.startsWith(type)) || 'QUERY';
             logQueryDetails(queryType, response, queryData, duration);
 
-            if (showResultTable.enabled && queryType === 'SELECT' && Array.isArray(response)) {
-                printTableLimited(response, showResultTable.rowLimit, showResultTable.columnLimit);
+            if (showResultTable.enabled && ['SELECT', 'UPDATE', 'INSERT'].includes(queryType) && Array.isArray(response) && response.length > 0 && typeof response[0] === 'object') {
+                printTableLimited(response, showResultTable.maxRows, showResultTable.maxColumns);
             }
         }
     });

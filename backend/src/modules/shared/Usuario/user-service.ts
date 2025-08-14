@@ -1,4 +1,5 @@
-import type { InsertUser, NewUser, EditUser, EditUserProfile } from "./user.schema.ts";
+import type { NewUser, EditUser, EditUserProfile } from "./user.schema.ts";
+import type { InsertUser } from "./user.entity.ts";
 import type { UserLogged } from "../../../types/UserLogged.ts";
 
 import { NotFoundError, ConflictError } from "../../../errors/all-errors.ts";
@@ -33,7 +34,10 @@ export class UserService {
 			password: hashedPassword,
 			created_by: userLogged.id
 		};
-		const [insertedUser] = await this.userRepository.insertUsers(updatedUserData);
+		const [insertedUser] = await this.userRepository.insertUsers({
+			users: [updatedUserData],
+			returning: ["id", "name", "login", "email", "phone"]
+		});
 		return insertedUser;
 	}
 
@@ -99,15 +103,18 @@ export class UserService {
 			})
 		);
 
-		const insertedUsers = await this.userRepository.insertUsers(usersWithHashedPasswords);
+		const insertedUsers = await this.userRepository.insertUsers({
+			users: usersWithHashedPasswords,
+			returning: ["id", "name", "login", "email", "phone"]
+		});
 		return insertedUsers;
 	}
 
 	async findAllUsers() {
-		const columns = ["id", "name", "login", "email", "phone"];
-		const users = await this.userRepository.selectAllUsers({ columns });
+		const users = await this.userRepository.selectAllUsers({ columns: ["id", "name", "login", "email"] });
 		return { users };
 	}
+
 
 	async findUserById(id: number) {
 		const [user] = await this.userRepository.selectUsersByIds({
@@ -141,7 +148,7 @@ export class UserService {
 		});
 
 		for (const existingUser of existingUsers) {
-			
+
 			if (existingUser.login === userData.login && existingUser.id !== id) {
 				throw new ConflictError("User with this login already exists");
 			}
@@ -154,8 +161,14 @@ export class UserService {
 			...userData,
 			updated_by: userLogged.id
 		};
-		const affectedRows = await this.userRepository.updateUsersByIds([id], updatedUserData);
-		return affectedRows;
+		const userUpdated = await this.userRepository.updateUsersByIds(
+			{
+				ids: [id],
+				userData: updatedUserData,
+				returning: ["id", "name", "login", "email", "phone"]
+			}
+		);
+		return userUpdated;
 		// 	const [updatedUser] = await this.userRepository.updateUsersByIds([id], userData);
 		// return updatedUser;
 	}

@@ -1,4 +1,4 @@
-import type { AuditEntity,InsertEntity, UpdateEntity, EntityColumn, Expand  } from "../../../types/ColumnTypesDb.ts";  
+import type { AuditEntity,InsertEntity, UpdateEntity, EntityColumn, Expand  } from "../../../types/CommonColumnsDb.ts";  
 
 export const USER_STATUS = ['active', 'inactive', 'blocked'] as const;
 
@@ -17,4 +17,4 @@ interface UserDB extends AuditEntity {
 export type User = Expand<UserDB>;
 export type InsertUser = InsertEntity<UserDB>;
 export type UpdateUser = UpdateEntity<UserDB>; 
-export type UserColumn = EntityColumn<UserDB> | '*';
+export type UserColumn = EntityColumn<UserDB>;

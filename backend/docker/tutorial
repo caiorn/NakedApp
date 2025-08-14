@@ -1,0 +1,6 @@
+docker build -t nome-da-minha-imagem:tagOpcionalColoqueSuaVersao .
+docker run -p 3000:3000 nome-da-minha-imagem:tagOpcionalColoqueSuaVersao
+docker images = lista todas imagens
+
+docker ps = exibe todos docker rodando
+docker stop CONTAINER_ID = finaliza a execucao do docker
