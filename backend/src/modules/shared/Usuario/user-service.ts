@@ -1,6 +1,5 @@
 import type { NewUser, EditUser, EditUserProfile } from "./user.schema.ts";
-import type { InsertUser } from "./user.entity.ts";
-import type { UserLogged } from "../../../types/UserLogged.ts";
+import type { InsertUser, UserLogged } from "./user.entity.ts";
 
 import { NotFoundError, ConflictError } from "../../../errors/all-errors.ts";
 import { UserRepository } from "./user-repository.ts";

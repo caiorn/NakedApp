@@ -1,5 +1,5 @@
 import 'fastify';
-import type { UserLogged } from '../types/UserLogged.ts';
+import type { UserLogged } from '../modules/shared/Usuario/user.entity.ts';
 import type { Knex } from 'knex';
 import type { SuccessReply, FailReply } from '../plugins/reply-decorators.ts';
 

@@ -38,12 +38,12 @@ class CacheMemory {
     const entry = this.cache.get(key);
     if (!entry) {
       console.log(`\x1b[31m[CacheMemory] Get key: "${key}" - MISS\x1b[0m`);
-      return null;
+      return undefined;
     }
     if (Date.now() > entry.expires) {
       this.cache.delete(key);
       console.log(`\x1b[33m[CacheMemory] Get key: "${key}" - EXPIRED\x1b[0m`);
-      return null;
+      return undefined;
     }
     console.log(`\x1b[32m[CacheMemory] Get key: "${key}" - HIT (Expires in: ${Math.ceil((entry.expires - Date.now()) / 1000)}s)\x1b[0m`);
     return entry.value;

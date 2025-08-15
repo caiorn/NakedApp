@@ -18,3 +18,6 @@ export type User = Expand<UserDB>;
 export type InsertUser = InsertEntity<UserDB>;
 export type UpdateUser = UpdateEntity<UserDB>; 
 export type UserColumn = EntityColumn<UserDB>;
+
+export const USER_LOGGED_COLUMNS = ['id', 'name', 'status', 'login', 'email'] as const;
+export type UserLogged = Expand<Pick<UserDB, typeof USER_LOGGED_COLUMNS[number]>> & { payload?: any };
