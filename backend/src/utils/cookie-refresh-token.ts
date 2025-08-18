@@ -1,32 +1,34 @@
+import type { FastifyReply, FastifyRequest } from 'fastify'
+import type { CookieSerializeOptions } from '@fastify/cookie'
+import ms from "ms";
 import { env } from '../env.ts';
-import { parseExpirationToSeconds } from "./parse-time.ts";
 import { TokenExpiredError } from '../errors/TokenExpiredError.ts';
 import { scramble, unscramble } from './str-obfuscate.ts';
 
 const _REFRESH_TOKEN_COOKIE = 'refresh_token';
 
-const _refreshTokenCookieOptions = {
+const _refreshTokenCookieOptions : CookieSerializeOptions = {
     signed: true,           // assina o cookie (usa a secret definida antes)
     httpOnly: true,         // evita acesso por JavaScript (protege contra XSS) 
     secure: env.inProduction,  // só é enviado via HTTPS (produção)
-    sameSite: 'Strict',     // não compartilha em requisições de outros domínios
+    sameSite: 'strict',     // não compartilha em requisições de outros domínios
     path: 'api/auth/refresh',              // cookie é válido em toda a aplicação
-    maxAge: parseExpirationToSeconds(env.JWT_REFRESH_EXPIRATION)
-}
+    maxAge:  ms(env.JWT_REFRESH_EXPIRATION) / 1000 // para segundos
+};
 
 // Define o cookie de refresh token na resposta
-export function setRefreshTokenCookie(reply, token) {
+export function setRefreshTokenCookie(reply: FastifyReply, token: string) {
     const scrambledToken = scramble(token);
     reply.setCookie(_REFRESH_TOKEN_COOKIE, scrambledToken, _refreshTokenCookieOptions);
 }
 
 // Limpa o cookie de refresh token na resposta
-export function clearRefreshTokenCookie(reply) {
+export function clearRefreshTokenCookie(reply: FastifyReply) {
     reply.clearCookie(_REFRESH_TOKEN_COOKIE);
 }
 
 // Obtém e valida um cookie assinado e retorna seu valor
-export function getSignedRefreshTokenValue(request) {
+export function getSignedRefreshTokenValue(request: FastifyRequest) {
     const signedCookie = request.cookies[_REFRESH_TOKEN_COOKIE];
     if (!signedCookie) {
         throw new TokenExpiredError(`Refresh token expirado`);

@@ -1,4 +1,4 @@
-export function scramble(str) {
+export function scramble(str : string) {
   if (!str) return str;
   
   const arr = str.split('');
@@ -12,7 +12,7 @@ export function scramble(str) {
   return result.join('');
 }
 
-export function unscramble(str) {
+export function unscramble(str: string) {
   if (!str) return str;
   
   const arr = str.split('');

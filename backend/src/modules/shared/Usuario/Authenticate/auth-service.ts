@@ -6,15 +6,17 @@ import { randomUUID } from 'crypto'
 
 
 export class AuthService {
-	constructor(userRepository, authRepository) {
-		/** @type {UserRepository} */
+	private userRepository: UserRepository;
+	private authRepository: AuthRepository;
+	private token: string | null;
+
+	constructor(userRepository : UserRepository, authRepository : AuthRepository) {
 		this.userRepository = userRepository;
-		/** @type {AuthRepository} */
 		this.authRepository = authRepository;
 		this.token = null;
 	}
 
-	async findUserByLoginAndPassword({ login, password }) {
+	async findUserByLoginAndPassword({ login, password }: { login: string; password: string; }) {
 		const user = await this.userRepository.selectUserByLogin({
 			login,
 			columns: ["id", "name", "password", "status", "avatar"]
@@ -38,7 +40,7 @@ export class AuthService {
 		return { user };
 	}
 
-	async createRefreshToken(userId, userAgent, ipAddress) {
+	async createRefreshToken(userId : number, userAgent : string | undefined, ipAddress : string) {
 		const refreshToken = randomUUID(); // ou JWT se preferir
 		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 dias
 
@@ -54,19 +56,19 @@ export class AuthService {
 		return { id: insertedToken.id, ...token  };
 	}
 
-    async deleteByToken(refreshToken) {
+    async deleteByToken(refreshToken : string) {
         const result =  await this.authRepository.destroyRefreshToken(refreshToken);
 		if (result === 0) {
 			throw new AuthError("Refresh token não encontrado ou já removido");
 		}
     }
 
-	async findSessionByToken(token) {
+	async findSessionByToken(token : string) {
 		const [session] = await this.authRepository.selectRefreshTokenByToken({ token });
 		return session;
 	}
 
-	async changePassword(userId, newPassword) {
+	async changePassword(userId : number, newPassword : string) {
 			// const user = await this.userRepository.getUserById(userId);
 			// if (!user) {
 			// 	throw new AppError("User not found", 404);
@@ -77,7 +79,7 @@ export class AuthService {
 			// return { message: "Password changed successfully" };
 		}
 
-	async resetPassword(userId, newPassword) {
+	async resetPassword(userId : number, newPassword : string) {
 			// const user = await this.userRepository.getUserById(userId);
 			// if (!user) {
 			// 	throw new AppError("User not found", 404);
@@ -89,7 +91,7 @@ export class AuthService {
 		}
 
 
-		setToken(token) {
+		setToken(token : string) {
 			this.token = token;
 		}
 

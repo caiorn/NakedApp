@@ -2,6 +2,7 @@ import { config } from 'dotenv'
 import { z } from 'zod'
 import { resolve } from 'node:path'
 import { existsSync } from 'node:fs'
+import type { StringValue } from 'ms';
 
 // Carrega o .env baseado no NODE_ENV
 const envFile = `.env.${process.env.NODE_ENV}`
@@ -43,6 +44,8 @@ if (!parsed.success) {
 
 export const env = {
   ...parsed.data,
+  JWT_ACCESS_EXPIRATION: parsed.data.JWT_ACCESS_EXPIRATION as StringValue,
+  JWT_REFRESH_EXPIRATION: parsed.data.JWT_REFRESH_EXPIRATION as StringValue,
   inProduction: parsed.data.NODE_ENV === 'production'
 };
 // 🖨️ Exibe variáveis no dev

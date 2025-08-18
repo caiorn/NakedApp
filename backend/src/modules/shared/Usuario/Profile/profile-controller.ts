@@ -1,9 +1,9 @@
+import type { FastifyRequest, FastifyReply } from "fastify";
 
+export async function getUserProfile(request: FastifyRequest, reply: FastifyReply) {
 
-export async function getUserProfile(request, reply) {
-
-    const { sub : id} = request.user; // Assuming the user ID is in the JWT payload
-    console.log(request.user);
+    const { sub : id} = request.userLogged?.payload; // Assuming the user ID is in the JWT payload
+    console.log(request.userLogged);
     // const { id } = request.params;
     // const userService = makeUserService();
     // const user = await userService.getUserById(id);

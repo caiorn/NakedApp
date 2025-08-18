@@ -1,4 +1,4 @@
-export function parseExpirationToSeconds(exp) {
+export function parseExpirationToSeconds(exp : number | string) {
     if (typeof exp === "number") return exp;
     const match = /^(\d+)([smhd])$/.exec(exp);
     if (!match) throw new Error("Formato de expiração inválido: " + exp);

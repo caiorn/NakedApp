@@ -1,6 +1,6 @@
 import { env } from './env.ts';
 import { app } from './app.ts';
-import { knex } from './db/knex-db.ts';
+// import { knex } from './db/knex-db.ts';
 
 async function start() {
 	try {

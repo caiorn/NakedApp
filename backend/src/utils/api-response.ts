@@ -1,9 +1,16 @@
-export function success(reply, statusCode, { data = null, message = null, meta = {} }) {
-  const response = {
+import type { FastifyReply } from 'fastify';
+interface SuccessOptions {
+  data?: any;
+  message?: string;
+  meta?: Record<string, any>;
+}
+
+export function success(reply: FastifyReply, statusCode: number, { data = null, message, meta = {} }: SuccessOptions) {
+  const response: Record<string, any> = {
     success: true,
     status: statusCode || 200, //futuro dashboard, logs...
     message: message || undefined,
-    data: data ?? undefined
+    data: data ?? undefined,
   };
 
   for (const _ in meta) {
@@ -16,8 +23,15 @@ export function success(reply, statusCode, { data = null, message = null, meta =
   reply.code(statusCode || 200).send(response);
 }
 
-export function fail(reply, statusCode, { message, error, issues, origin}) {
-  const response = {
+interface FailOptions {
+  message?: string;
+  error?: string;
+  issues?: any;
+  origin?: string;
+}
+
+export function fail(reply: FastifyReply, statusCode: number, { message, error, issues, origin }: FailOptions) {
+  const response: Record<string, any> = {
     success: false,
     status: statusCode || 500,
     message: message || 'An error occurred',
