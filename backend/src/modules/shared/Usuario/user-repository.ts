@@ -1,6 +1,7 @@
-import type { User, UserColumn, InsertUser, UpdateUser } from "./user.entity.ts";
+import type { User, UserColumn, InsertUser, UpdateUser, } from "./user.entity.ts";
+import type { EntityResult } from "../../../types/utils.ts";
 import type { Knex } from "knex";
-import type { IUserRepository  } from "./user-repository-interface.ts";
+import type { IUserRepository } from "./user-repository-interface.ts";
 import { knex } from "../../../db/knex-db.ts";
 
 export class UserRepository implements IUserRepository {
@@ -19,7 +20,7 @@ export class UserRepository implements IUserRepository {
 	}: {
 		users: InsertUser | InsertUser[];
 		returning?: T;
-	}): Promise<Pick<User, T[number]>[]> {
+	}): Promise<EntityResult<User, T>[]> {
 		// PostgreSQL: descomente essa linha se estiver usando Postgres
 		const insertedUsers = await this.db<User>("users")
 			.insert(users)
@@ -32,7 +33,7 @@ export class UserRepository implements IUserRepository {
 		// 	? users.map((_, index) => ({ id: insertedId + index })) // simula múltiplos IDs
 		// 	: [{ id: insertedId }];
 
-		return insertedUsers as Pick<User, T[number]>[];
+		return insertedUsers as EntityResult<User, T>[];
 	}
 
 	async updateUsersByIds<T extends readonly UserColumn[]>({
@@ -43,13 +44,12 @@ export class UserRepository implements IUserRepository {
 		ids: number[];
 		userData: UpdateUser;
 		returning: T;
-	}): Promise<Pick<User, T[number]>[]> {
+	}): Promise<EntityResult<User, T>[]> {
 		const updatedUsers = await this.db<User>("users")
 			.whereIn("id", ids)
 			.update(userData)
 			.returning(returning);
-
-		return updatedUsers as Pick<User, T[number]>[];
+		return updatedUsers as EntityResult<User, T>[];
 	}
 
 	async destroyUsersSoftly(ids: number[]) {
@@ -63,11 +63,11 @@ export class UserRepository implements IUserRepository {
 		columns  // = ["*"] as unknown as T, 
 	}: {
 		columns: T; //	columns?: T;
-	}): Promise<Pick<User, T[number]>[]> {
+	}): Promise<EntityResult<User, T>[]> {
 		const users = await this.db<User>("users")
 			.select(...columns)
 			.whereNull('deleted_at');
-		return users as Pick<User, T[number]>[];
+		return users as EntityResult<User, T>[];
 	}
 
 	async selectUsersByIds<T extends readonly UserColumn[]>({
@@ -76,13 +76,13 @@ export class UserRepository implements IUserRepository {
 	}: {
 		ids: number[];
 		columns: T; //
-	}): Promise<Pick<User, T[number]>[]> {
+	}): Promise<EntityResult<User, T>[]> {
 		const users = await this.db<User>("users")
 			.select(...columns)
 			.whereIn("id", ids)
 			.whereNull("deleted_at");
 
-		return users as Pick<User, T[number]>[];
+		return users as EntityResult<User, T>[];
 	}
 
 
@@ -92,12 +92,12 @@ export class UserRepository implements IUserRepository {
 	}: {
 		name: string;
 		columns: T;
-	}): Promise<Pick<User, T[number]>[]> {
+	}): Promise<EntityResult<User, T>[]> {
 		const users = await this.db<User>("users")
 			.select(...columns)
 			.whereLike("name", `%${name}%`)
 			.whereNull("deleted_at");
-		return users as Pick<User, T[number]>[];
+		return users as EntityResult<User, T>[];
 	}
 
 	async selectUserByLogin<T extends readonly UserColumn[]>({
@@ -106,14 +106,14 @@ export class UserRepository implements IUserRepository {
 	}: {
 		login: string;
 		columns: T;
-	}): Promise<Pick<User, T[number]> | undefined> {
+	}): Promise<EntityResult<User, T> | undefined> {
 		const user = await this.db<User>("users")
 			.select(...columns)
 			.where({ login })
 			.whereNull("deleted_at")
 			.first();
 
-		return user as Pick<User, T[number]> | undefined;
+		return user as EntityResult<User, T> | undefined;
 	}
 
 	async selectUsersByUniqueFields<T extends readonly UserColumn[]>({
@@ -124,7 +124,7 @@ export class UserRepository implements IUserRepository {
 		logins: string[];
 		emails: string[];
 		columns: T;
-	}): Promise<Pick<User, T[number]>[]> {
+	}): Promise<EntityResult<User, T>[]> {
 		if (logins.length === 0 && emails.length === 0) {
 			return [];
 		}
@@ -135,6 +135,6 @@ export class UserRepository implements IUserRepository {
 			.orWhereIn("email", emails)
 			.whereNull("deleted_at");
 
-		return users as Pick<User, T[number]>[];
+		return users as EntityResult<User, T>[];
 	}
 }

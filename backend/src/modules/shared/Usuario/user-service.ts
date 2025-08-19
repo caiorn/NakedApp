@@ -36,7 +36,7 @@ export class UserService {
 		const [insertedUser] = await this.userRepository.insertUsers({
 			users: [updatedUserData],
 			returning: ["id", "name", "login", "email", "phone"]
-		});
+		});		
 		return insertedUser;
 	}
 
@@ -160,7 +160,7 @@ export class UserService {
 			...userData,
 			updated_by: userLogged.id
 		};
-		const userUpdated = await this.userRepository.updateUsersByIds(
+		const [userUpdated] = await this.userRepository.updateUsersByIds(
 			{
 				ids: [id],
 				userData: updatedUserData,

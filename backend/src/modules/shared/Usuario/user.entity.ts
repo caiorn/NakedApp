@@ -1,4 +1,5 @@
-import type { AuditEntity,InsertEntity, UpdateEntity, EntityColumn, Expand  } from "../../../types/CommonColumnsDb.ts";  
+import type { AuditEntity,InsertEntity, UpdateEntity, EntityColumn  } from "../../../types/CommonColumnsDb.ts";  
+import type { Expand } from "../../../types/utils.ts";  
 
 export const USER_STATUS = ['active', 'inactive', 'blocked'] as const;
 
