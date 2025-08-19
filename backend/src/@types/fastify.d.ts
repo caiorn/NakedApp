@@ -10,7 +10,7 @@ declare module 'fastify' {
   }
   interface FastifyReply {
     success: SuccessReply;
-    error: FailReply;
+    fail: FailReply;
   }
   interface FastifyInstance {
     db: Knex;

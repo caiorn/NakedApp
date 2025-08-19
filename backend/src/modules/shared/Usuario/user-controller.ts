@@ -45,11 +45,11 @@ export const editUser = async (request: FastifyRequest<{ Params: { id: string } 
 	const knexTransaction = await request.server.db.transaction();
 	try {
 		const userService = makeUserService(knexTransaction);
-		const affectedRows = await userService.changeUser(userToEditID, validatedUser.data, userLogged);
+		const userUpdated = await userService.changeUser(userToEditID, validatedUser.data, userLogged);
 		await knexTransaction.commit();
 		cacheMemory.delete(CacheKeys.USER(userToEditID));
 		reply.success(200, {
-			data: affectedRows,
+			data: userUpdated,
 			message: `User updated successfully`
 		});
 	} catch (error) {

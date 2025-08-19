@@ -1,6 +1,5 @@
 import type { FastifyRequest, FastifyReply } from "fastify";
-import type { UserLogged } from "../modules/shared/Usuario/user.entity.ts";
-import { USER_LOGGED_COLUMNS } from "../modules/shared/Usuario/user.entity.ts";
+import { USER_LOGGED_COLUMNS, type UserLogged } from "../modules/shared/Usuario/user.entity.ts";
 import { UnauthorizedError, NotFoundError, PermissionError } from "../errors/all-errors.ts";
 import { verifyAccessToken } from '../utils/jwt.ts';
 import { cacheMemory, CacheKeys } from "../utils/cache-memory.ts";
@@ -14,13 +13,12 @@ import { UserRepository } from "../modules/shared/Usuario/user-repository.ts";
 export async function authUserHandler(request: FastifyRequest, reply: FastifyReply) {
     // Assuming Bearer token format
     const accessToken = request.headers.authorization?.split(' ')[1];
-
     if (!accessToken) {
         throw new UnauthorizedError("Autenticação não informada");
     }
 
     const payloadDecoded = await verifyAccessToken(accessToken);
-    const userId = payloadDecoded?.sub;
+    const userId = +payloadDecoded?.sub;
 
     if (!userId) {
         throw new UnauthorizedError("Usuario não identificado na autenticação");
@@ -37,7 +35,7 @@ export async function authUserHandler(request: FastifyRequest, reply: FastifyRep
         if (!user.status || user.status !== 'active') {
             throw new PermissionError("Usuario não está ativo");
         }
-        cacheMemory.set(CacheKeys.USER(userId), user, 1);
+        cacheMemory.set(CacheKeys.USER(userId), user, '1min');
     }
     request.userLogged = { ...user, payload: payloadDecoded };
 }

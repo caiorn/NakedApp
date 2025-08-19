@@ -8,7 +8,6 @@ import {
     getSignedRefreshTokenValue,
     clearRefreshTokenCookie
 } from '../../../../utils/cookie-refresh-token.ts';
-import { success } from '../../../../utils/api-response.ts';
 
 export async function authenticateUser(request: FastifyRequest, reply: FastifyReply) {
     const validatedUser = authSchema.safeParse(request.body);
@@ -24,7 +23,7 @@ export async function authenticateUser(request: FastifyRequest, reply: FastifyRe
 
     setRefreshTokenCookie(reply, refreshToken);
 
-    success(reply, 200, {
+    reply.success(200, {
         message: 'Usuário autenticado com sucesso',
         data: { token: accessToken, user: { id, name, avatar } },
     });
@@ -40,7 +39,7 @@ export const refreshToken = async (request: FastifyRequest, reply: FastifyReply)
     // Atualiza o cookie
     setRefreshTokenCookie(reply, newRefreshToken);
 
-    success(reply, 200, {
+    reply.success(200, {
         message: 'Token atualizado com sucesso',
         data: { token: newAccessToken },
     });
@@ -66,7 +65,7 @@ export const refreshTokenDB = async (request: FastifyRequest, reply: FastifyRepl
     const newAccessToken = signAccessToken(session.user_id);
     const newRefreshToken = await authService.createRefreshToken(session.user_id, request.headers['user-agent'], request.ip);
     setRefreshTokenCookie(reply, newRefreshToken.token);
-    success(reply, 200, {
+    reply.success(200, {
         message: 'Token atualizado com sucesso',
         data: { token: newAccessToken },
     });
@@ -76,7 +75,7 @@ export const refreshTokenDB = async (request: FastifyRequest, reply: FastifyRepl
 export const logout = async (request: FastifyRequest, reply: FastifyReply) => {
     // Limpa o cookie de refresh token
     clearRefreshTokenCookie(reply);
-    success(reply, 200, {
+    reply.success(200, {
         message: 'Logout realizado com sucesso',
     });
 };
@@ -91,7 +90,7 @@ export const getInfoToken = async (request: FastifyRequest, reply: FastifyReply)
         iat: new Date(payload.iat * 1000), // Data de emissão
         exp: new Date(payload.exp * 1000)  // Data de expiração
     };
-    success(reply, 200, {
+    reply.success(200, {
         data: payloadWithDates
     });
 };

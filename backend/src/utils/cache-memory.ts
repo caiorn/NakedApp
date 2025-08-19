@@ -7,13 +7,15 @@
  * 
 */
 
+import ms, { type StringValue } from "ms";
+
 export const CacheKeys = {
   USER: (id : number) => `user:${id}`,
   // Exemplo: 'users:list' para lista de usuários
 };
 
 class CacheMemory {
-  cache: Map<any, any>;
+  cache: Map<string, any>;
   defaultTTLms: number;
   
   constructor(defaultTTLMinutes = 5) {
@@ -24,11 +26,11 @@ class CacheMemory {
     setInterval(() => this.cleanupExpired(), 5 * 60 * 1000);
   }
 
-  set(key: string, value: any, ttlMin: number) {
+  set(key: string, value: any, ttl: StringValue) {
     if (this.cache.has(key)) {
       console.log(`\x1b[33m[CacheMemory] Overwriting key: "${key}"\x1b[0m`);
     }
-    const ttlMs = (ttlMin * 60 * 1000) || this.defaultTTLms;
+    const ttlMs = ms(ttl) || this.defaultTTLms;
     const expires = Date.now() + (ttlMs);
   this.cache.set(key, { value, expires });
     console.log(`\x1b[32m[CacheMemory] Set key: "${key}" with TTL: ${ttlMs / 60 / 1000} m\x1b[0m`);

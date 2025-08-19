@@ -1,41 +1,45 @@
+import type { FastifyReply, FastifyRequest } from 'fastify';
 import { env } from '../env.ts'
-import { fail } from '../utils/api-response.ts'
 import { BaseError } from '../errors/BaseError.ts';
 
-export function errorHandler(error, request, reply) {
+function extractOrigin(stack?: string): string | undefined {
+    if (!stack || env.NODE_ENV === "production") return;
+
+    return stack
+        .split("\n")
+        .find(
+            (line) =>
+                line.includes("at ") &&
+                !line.includes("node_modules") &&
+                !line.includes("internal") &&
+                line.includes("/src/")
+        )
+        ?.trim();
+}
+
+export function errorHandler(error: unknown, _req: FastifyRequest, reply: FastifyReply) {
     try {
-        // se não for uma instância de BaseError
-        if (!(error instanceof BaseError) && error.stack) {
-            console.error(error.stack);
-        }
-        //se não tiver em producao, incluir o origin na resposta
+        let statusCode = 500;
+        let message = "Erro interno inesperado";
+        let errorName = "InternalServerError";
+        let issues;
         let origin;
-        if (env.NODE_ENV !== 'production' && error.stack) {
-            const stackLines = error.stack.split('\n');
-            // Pega a primeira linha que esteja fora de node_modules e internal, e dentro do seu src
-            origin = stackLines.find(line =>
-                line.includes('at ') &&
-                !line.includes('node_modules') &&
-                !line.includes('internal') &&
-                line.includes('/src/') // se seu código estiver dentro da pasta /src/
-            );
 
-            if (origin) {
-                origin = origin.trim();
-            }
+        if (error instanceof BaseError) {
+            statusCode = error.statusCode;
+            message = error.message;
+            errorName = error.name;
+            issues = error.issues;
+        } else if (error instanceof Error) {
+            console.error(error.stack || error.message);
+            origin = extractOrigin(error.stack);
         } else {
-            // TODO: logar erro em serviço externo (Sentry, etc)
+            console.error("Non-Error thrown:", error);
         }
-
-        fail(reply, error.statusCode, {
-            message: error.message,
-            error: error.constructor.name,
-            issues: error.issues,
-            origin
-        });
-    } catch (error) {
-        console.error('------------- error in error-handler.js------------')
-        console.error(error.stack);
+        reply.fail(statusCode, { message, error: errorName, issues, origin });
+    } catch (handlerError) {
+        console.error("------------- error in error-handler ------------");
+        console.error(handlerError);
         reply.status(500).send("error-handler error");
     }
 }
