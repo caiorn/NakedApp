@@ -9,7 +9,7 @@ export const config = {
   useNullAsDefault: true,
   migrations: {
     tableName: '_sys_migrations',
-    directory: './migrations'
+    directory: './migrations' 
   },
   seeds: {
     directory: './seeds'
