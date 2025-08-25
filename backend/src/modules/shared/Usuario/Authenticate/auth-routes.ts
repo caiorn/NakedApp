@@ -1,7 +1,8 @@
+import type { FastifyInstance } from "fastify"; 
 import { authenticateUser, getInfoToken, refreshToken } from "./auth-controller.ts";
 import { authUserHandler } from '../../../../middlewares/auth-user-handler.ts';
 
-export const authRoutes = async (fastify) => {
+export const authRoutes = async (fastify: FastifyInstance) => {
   fastify.post('/login', authenticateUser);
   fastify.post('/logout', { preHandler: authUserHandler }, getInfoToken);
   fastify.post('/refresh', refreshToken);

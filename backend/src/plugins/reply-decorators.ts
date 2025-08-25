@@ -1,65 +1,54 @@
+import type { FastifyReply } from "fastify"; 
+
 export type SuccessReply = typeof success;
 export type FailReply = typeof fail;
 
 export function success(
-    this: any,
+    this: FastifyReply,
     statusCode: number,
-    {
-        data = null,
-        message = null,
-        meta = {}
-    }: {
+    body : {
         data?: any;
         message?: string | null;
         meta?: object;
     }
 ) {
-    const response: {
-        success: boolean;
-        status: number;
-        message?: string | null;
-        data?: any;
-        meta?: object;
-        path?: string;
-        timestamp?: string;
-    } = {
+    const response = {
         success: true,
         status: statusCode || 200,
-        message: message || undefined,
-        data: data ?? undefined
+        message: body.message || undefined,
+        data: body.data ?? undefined,
+        meta: undefined as object | undefined,
+        path: this.request.raw.url,
+        timestamp: new Date().toISOString() 
     };
 
-    for (const _ in meta) {
-        response.meta = meta;
+    for (const _ in body.meta) {
+        response.meta = body.meta;
         break;
     }
 
-    response.path = this.request.raw.url;
-    response.timestamp = new Date().toISOString();
     this.code(statusCode || 200).send(response);
 }
 
-export function fail(this: any, statusCode: number, { message, error, issues, origin }: { message?: string; error?: string; issues?: any; origin?: string }) {
-    const response: {
-        success: boolean;
-        status: number;
-        message: string;
-        error: string;
-        issues?: any;
-        origin?: string;
-        path?: string;
-        timestamp?: string;
-    } = {
+export function fail(
+    this: FastifyReply,
+    statusCode: number,
+    body: { 
+        message?: string; 
+        error?: string; 
+        issues?: any; 
+        origin?: string 
+    }) {
+    const response = {
         success: false,
         status: statusCode || 500,
-        message: message || 'An error occurred',
-        error: error || 'InternalServerError',
-        issues: issues || undefined,
-        origin: origin || undefined
+        message: body.message || 'An error occurred',
+        error: body.error || 'InternalServerError',
+        issues: body.issues || undefined,
+        origin: body.origin || undefined,
+        path: this.request.raw.url,
+        timestamp: new Date().toISOString()
     };
-
-    response.path = this.request.raw.url;
-    response.timestamp = new Date().toISOString();
 
     this.code(statusCode || 500).send(response);
 }

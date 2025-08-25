@@ -1,5 +1,6 @@
 import type { IUserRepository } from "./user-repository-interface.ts";
 import type { User, UserColumn, InsertUser, UpdateUser } from "./user.entity.ts";
+import type { EntityResult, Expand } from "../../../types/utils.ts";
 
 export class UserRepositoryFake implements IUserRepository {
     private users: User[] = [
@@ -8,8 +9,7 @@ export class UserRepositoryFake implements IUserRepository {
         { id: 3, login: 'bob_wilson', email: 'bob@example.com', name: 'Bob Wilson', password: 'hashed_password_3', created_by: 1, created_at: new Date('2023-01-03'), updated_at: new Date('2023-01-03'), deleted_at: null }
     ];
     private nextId = 4;
-
-    async insertUsers<T extends readonly UserColumn[]>(params: { users: InsertUser | InsertUser[]; returning?: T; }): Promise<Pick<User, T[number]>[]> {
+    async insertUsers<T extends readonly UserColumn[]>(params: { users: InsertUser | InsertUser[]; returning?: T; }): Promise<EntityResult<User, T>[]> {
         const usersArray = Array.isArray(params.users) ? params.users : [params.users];
         const insertedUsers: User[] = [];
 
@@ -26,15 +26,14 @@ export class UserRepositoryFake implements IUserRepository {
             this.users.push(newUser);
             insertedUsers.push(newUser);
         }
-
         if (!params.returning) {
-            return insertedUsers as Pick<User, T[number]>[];
+            return insertedUsers as unknown as EntityResult<User, T>[];
         }
 
         return insertedUsers.map(user => this.pickColumns(user, params.returning!));
     }
 
-    async updateUsersByIds<T extends readonly UserColumn[]>(params: { ids: number[]; userData: UpdateUser; returning: T; }): Promise<Pick<User, T[number]>[]> {
+    async updateUsersByIds<T extends readonly UserColumn[]>(params: { ids: number[]; userData: UpdateUser; returning: T; }): Promise<EntityResult<User, T>[]> {
         const updatedUsers: User[] = [];
 
         for (const id of params.ids) {
@@ -68,37 +67,37 @@ export class UserRepositoryFake implements IUserRepository {
         return deletedCount;
     }
 
-    async selectAllUsers<T extends readonly UserColumn[]>(params: { columns: T; }): Promise<Pick<User, T[number]>[]> {
+    async selectAllUsers<T extends readonly UserColumn[]>(params: { columns: T; }): Promise<EntityResult<User, T>[]>{
         const activeUsers = this.users.filter(user => !user.deleted_at);
         return activeUsers.map(user => this.pickColumns(user, params.columns));
     }
 
-    async selectUsersByIds<T extends readonly UserColumn[]>(params: { ids: number[]; columns: T; }): Promise<Pick<User, T[number]>[]> {
+    async selectUsersByIds<T extends readonly UserColumn[]>(params: { ids: number[]; columns: T; }): Promise<EntityResult<User, T>[]>{
         const foundUsers = this.users.filter(user => params.ids.includes(user.id) && !user.deleted_at);
         return foundUsers.map(user => this.pickColumns(user, params.columns));
     }
 
-    async selectUsersLikeName<T extends readonly UserColumn[]>(params: { name: string; columns: T; }): Promise<Pick<User, T[number]>[]> {
+    async selectUsersLikeName<T extends readonly UserColumn[]>(params: { name: string; columns: T; }): Promise<EntityResult<User, T>[]>{
         const matchingUsers = this.users.filter(user => 
             user.name.toLowerCase().includes(params.name.toLowerCase()) && !user.deleted_at
         );
         return matchingUsers.map(user => this.pickColumns(user, params.columns));
     }
 
-    async selectUserByLogin<T extends readonly UserColumn[]>(params: { login: string; columns: T; }): Promise<Pick<User, T[number]> | undefined> {
+    async selectUserByLogin<T extends readonly UserColumn[]>(params: { login: string; columns: T; }): Promise<EntityResult<User, T> | undefined> {
         const user = this.users.find(user => user.login === params.login && !user.deleted_at);
         return user ? this.pickColumns(user, params.columns) : undefined;
     }
 
-    async selectUsersByUniqueFields<T extends readonly UserColumn[]>(params: { logins: string[]; emails: string[]; columns: T; }): Promise<Pick<User, T[number]>[]> {
+    async selectUsersByUniqueFields<T extends readonly UserColumn[]>(params: { logins: string[]; emails: string[]; columns: T; }): Promise<EntityResult<User, T>[]>{
         const matchingUsers = this.users.filter(user => 
             (params.logins.includes(user.login) || params.emails.includes(user.email)) && !user.deleted_at  
         );
         return matchingUsers.map(user => this.pickColumns(user, params.columns));
     }
 
-    private pickColumns<T extends readonly UserColumn[]>(user: User, columns: T): Pick<User, T[number]> {
-        const result = {} as Pick<User, T[number]>;
+    private pickColumns<T extends readonly UserColumn[]>(user: User, columns: T): Expand<Pick<User, T[number]>> {
+        const result = {} as Expand<Pick<User, T[number]>>;
         for (const column of columns) {
             (result as any)[column] = user[column as keyof User];
         }

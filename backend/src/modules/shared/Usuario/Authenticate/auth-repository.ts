@@ -1,15 +1,18 @@
 import { knex } from "../../../../db/knex-db.ts";
+import type { Knex } from "knex";
 
 export class AuthRepository {
-    constructor(trxKnex) {
-        /** @type {import("knex").Knex} */
+
+    private db: Knex | Knex.Transaction;
+
+    constructor(trxKnex?: Knex.Transaction) {
         this.db = trxKnex || knex;
     }
     async #simulateDelay(ms = 500) {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    async insertRefreshToken(tokenData) {
+    async insertRefreshToken(tokenData : { userId: number; token: string; createdAt: Date; }) {
         // PostgreSQL: descomente essa linha se estiver usando Postgres
         const insertedToken = await this.db("refresh_tokens").insert(tokenData).returning('id');
 
