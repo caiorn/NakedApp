@@ -41,4 +41,23 @@ export class AuthRepository {
             .where("token", token);
         return refreshTokens;
     }
+
+    async insertPasswordResetToken(data: { user_id: number; token: string; expires_at: Date; }) {
+        const [insertedToken] = await this.db("password_resets").insert(data).returning("id");
+        return insertedToken;
+    }
+
+    async updatePasswordResetToken(id: string, newData: { used_at: Date; }) {
+        const affectedRows = await this.db("password_resets")
+            .update(newData)
+            .where("id", id);
+        return affectedRows;
+    }
+
+    async selectPasswordResetToken({ token, columns = ["*"] }: { token: string; columns?: string[] }) {
+        const passwordResetTokens = await this.db("password_resets")
+            .select(columns)
+            .where("token", token);
+        return passwordResetTokens;
+    }
 }

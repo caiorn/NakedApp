@@ -1,8 +1,8 @@
-import { AuthError, PermissionError, } from "../../../../errors/all-errors.ts";
+import { AuthError, PermissionError, NotFoundError } from "../../../../errors/all-errors.ts";
 import { UserRepository } from "../user-repository.ts";
 import { AuthRepository } from "./auth-repository.ts";
 import bcrypt from "bcryptjs";
-import { randomUUID } from 'crypto'
+import crypto from 'crypto'
 
 
 export class AuthService {
@@ -10,7 +10,7 @@ export class AuthService {
 	private authRepository: AuthRepository;
 	private token: string | null;
 
-	constructor(userRepository : UserRepository, authRepository : AuthRepository) {
+	constructor(userRepository: UserRepository, authRepository: AuthRepository) {
 		this.userRepository = userRepository;
 		this.authRepository = authRepository;
 		this.token = null;
@@ -40,8 +40,8 @@ export class AuthService {
 		return { user };
 	}
 
-	async createRefreshToken(userId : number, userAgent : string | undefined, ipAddress : string) {
-		const refreshToken = randomUUID(); // ou JWT se preferir
+	async createRefreshToken(userId: number, userAgent: string | undefined, ipAddress: string) {
+		const refreshToken = crypto.randomUUID(); // ou JWT se preferir
 		const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 dias
 
 		const token = {
@@ -53,53 +53,94 @@ export class AuthService {
 		};
 
 		const [insertedToken] = await this.authRepository.insertRefreshToken(token);
-		return { id: insertedToken.id, ...token  };
+		return { id: insertedToken.id, ...token };
 	}
 
-    async deleteByToken(refreshToken : string) {
-        const result =  await this.authRepository.destroyRefreshToken(refreshToken);
+	async deleteByToken(refreshToken: string) {
+		const result = await this.authRepository.destroyRefreshToken(refreshToken);
 		if (result === 0) {
 			throw new AuthError("Refresh token não encontrado ou já removido");
 		}
-    }
+	}
 
-	async findSessionByToken(token : string) {
+	async findSessionByToken(token: string) {
 		const [session] = await this.authRepository.selectRefreshTokenByToken({ token });
 		return session;
 	}
 
-	async changePassword(userId : number, newPassword : string) {
-			// const user = await this.userRepository.getUserById(userId);
-			// if (!user) {
-			// 	throw new AppError("User not found", 404);
-			// }
+	async createTokenResetPassword({ email }: { email: string }) {
+		const user = await this.userRepository.selectUserByEmail({
+			email,
+			columns: ["id", "name", "status"]
+		});
 
-			// const hashedPassword = await bcrypt.hash(newPassword, 8);
-			// await this.userRepository.updateUserPassword(userId, hashedPassword);
-			// return { message: "Password changed successfully" };
+		if (!user || user.status === 'blocked') {
+			return false; // resposta genérica para não expor usuários
 		}
 
-	async resetPassword(userId : number, newPassword : string) {
-			// const user = await this.userRepository.getUserById(userId);
-			// if (!user) {
-			// 	throw new AppError("User not found", 404);
-			// }
+		const resetToken = crypto.randomBytes(32).toString("hex");
+		const tokenHash = crypto.createHash("sha256").update(resetToken).digest("hex");
+		const expiresAt = new Date(Date.now() + 60 * 60 * 1000); // 1h
 
-			// const hashedPassword = await bcrypt.hash(newPassword, 8);
-			// await this.userRepository.updateUserPassword(userId, hashedPassword);
-			// return { message: "Password reset successfully" };
-		}
+		await this.authRepository.insertPasswordResetToken({
+			user_id: user.id,
+			token: tokenHash,
+			expires_at: expiresAt
+		});
+		return true;
 
-
-		setToken(token : string) {
-			this.token = token;
-		}
-
-		getToken() {
-			return this.token;
-		}
-
-		isAuthenticated() {
-			return !!this.token;
-		}
+		// const hashedPassword = await bcrypt.hash(newPassword, 8);
+		// await this.userRepository.updateUserPassword(userId, hashedPassword);
+		// return { message: "Password reset successfully" };
 	}
+
+
+	async editPasswordWithToken(inputData: { token: string; newPassword: string; }) {
+		const [passwordReset] = await this.authRepository.selectPasswordResetToken({ token: inputData.token });
+		if (!passwordReset) {
+			throw new NotFoundError("Token de redefinição de senha inválido");
+		}
+
+		if (passwordReset.expires_at < new Date()) {
+			throw new AuthError("Token de redefinição de senha expirado");
+		}
+
+		if(passwordReset.used_at) {
+			throw new AuthError("Token de redefinição de senha já utilizado");
+		}
+
+		const [user] = await this.userRepository.selectUsersByIds({ 
+			ids: [passwordReset.user_id], 
+			columns: ["id", "name", 'status'] 
+		})
+
+		if (!user || user.status === 'blocked') {
+			throw new NotFoundError("Não foi possivel alterar a senha");
+		}
+
+		await this.userRepository.updateUsersByIds({ 
+			ids: [user.id], 
+			userData: { 
+				password: await bcrypt.hash(inputData.newPassword, 8),
+				updated_by: user.id,
+			} ,
+			returning: ["id", "name", "login", "email"]
+		});
+
+		// dá baixa no token
+		await this.authRepository.updatePasswordResetToken(passwordReset.id, { used_at: new Date() });
+
+	}
+
+	setToken(token: string) {
+		this.token = token;
+	}
+
+	getToken() {
+		return this.token;
+	}
+
+	isAuthenticated() {
+		return !!this.token;
+	}
+}

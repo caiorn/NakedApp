@@ -1,6 +1,6 @@
 import type { FastifyReply, FastifyRequest } from 'fastify';
 import { makeAuthService } from './auth-service-factory.ts';
-import { authSchema } from './auth-schema.ts'
+import * as authSchema from './auth-schema.ts'
 import { BadRequestError, TokenExpiredError } from '../../../../errors/all-errors.ts';
 import { signAccessToken, signRefreshToken, verifyRefreshToken } from '../../../../utils/jwt.ts';
 import {
@@ -10,7 +10,7 @@ import {
 } from '../../../../utils/cookie-refresh-token.ts';
 
 export async function authenticateUser(request: FastifyRequest, reply: FastifyReply) {
-    const validatedUser = authSchema.safeParse(request.body);
+    const validatedUser = authSchema.loginSchema.safeParse(request.body);
     if (!validatedUser.success) {
         throw new BadRequestError(401, 'Dados Inválidos', validatedUser);
     }
@@ -87,6 +87,8 @@ export const getInfoToken = async (request: FastifyRequest, reply: FastifyReply)
     const { payload } = request.userLogged!;
     const payloadWithDates = {
         ...payload,
+        userAgent,
+        ip,
         iat: new Date(payload.iat * 1000), // Data de emissão
         exp: new Date(payload.exp * 1000)  // Data de expiração
     };
@@ -94,3 +96,36 @@ export const getInfoToken = async (request: FastifyRequest, reply: FastifyReply)
         data: payloadWithDates
     });
 };
+
+export const sendResetTokenToEmail = async (request: FastifyRequest, reply: FastifyReply) => {
+    const validatedEmail = authSchema.emailSchema.safeParse(request.body);
+    if (!validatedEmail.success) {
+        throw new BadRequestError(401, 'Dados Inválidos', validatedEmail);
+    }
+    const authService = makeAuthService();
+    const created = await authService.createTokenResetPassword(validatedEmail.data);
+    if (created) {
+        // await sendEmail({
+        //     to: email,
+        //     subject: 'Redefinição de Senha',
+        //     text: `Seu token de redefinição de senha é: ${resetToken}`
+        // });
+    }
+    reply.success(200, {
+        message: 'Se o email estiver cadastrado, você receberá um link para redefinir sua senha.'
+    });
+};
+
+
+export const updatePasswordWithToken = async (request: FastifyRequest, reply: FastifyReply) => {
+    const validatedData = authSchema.resetPasswordSchema.safeParse(request.body);
+    if (!validatedData.success) {
+        throw new BadRequestError(401, 'Dados Inválidos', validatedData);
+    }
+    const authService = makeAuthService();
+    await authService.editPasswordWithToken(validatedData.data);
+    reply.success(200, {
+        message: 'Senha atualizada com sucesso'
+    });
+};
+    

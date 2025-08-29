@@ -47,7 +47,10 @@ export class UserRepository implements IUserRepository {
 	}): Promise<EntityResult<User, T>[]> {
 		const updatedUsers = await this.db<User>("users")
 			.whereIn("id", ids)
-			.update(userData)
+			.update({
+				...userData,
+				updated_at: this.db.fn.now()
+			})
 			.returning(returning);
 		return updatedUsers as EntityResult<User, T>[];
 	}
@@ -110,6 +113,22 @@ export class UserRepository implements IUserRepository {
 		const user = await this.db<User>("users")
 			.select(...columns)
 			.where({ login })
+			.whereNull("deleted_at")
+			.first();
+
+		return user as EntityResult<User, T> | undefined;
+	}
+
+	async selectUserByEmail<T extends readonly UserColumn[]>({
+		email,
+		columns
+	}: {
+		email: string;
+		columns: T;
+	}): Promise<EntityResult<User, T> | undefined> {
+		const user = await this.db<User>("users")
+			.select(...columns)
+			.where({ email })
 			.whereNull("deleted_at")
 			.first();
 

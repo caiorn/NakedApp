@@ -34,6 +34,14 @@ export interface IUserRepository {
         columns: T;
     }): Promise<EntityResult<User, T> | undefined>;
 
+    selectUserByEmail<T extends readonly UserColumn[]>({
+        email,
+        columns
+    }: {
+        email: string;
+        columns: T;
+    }): Promise<EntityResult<User, T> | undefined>;
+    
     selectUsersByUniqueFields<T extends readonly UserColumn[]>(params: {
         logins: string[];
         emails: string[];

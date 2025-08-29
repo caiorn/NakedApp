@@ -20,6 +20,16 @@ export async function up(knex) {
     table.integer('deleted_by').references('id').inTable('users').onDelete('SET NULL').onUpdate('CASCADE');
   });
 
+  await knex.schema.createTable('password_resets', (table) => {
+    table.increments('id').primary(); // Identificador primário
+    table.integer('user_id').notNullable();
+    table.string('token').notNullable();
+    table.timestamp('created_at').defaultTo(knex.fn.now());
+    table.timestamp('expires_at').notNullable();
+    table.timestamp('used_at');
+    table.foreign('user_id').references('id').inTable('users').onDelete('CASCADE');
+  });
+
   await knex.schema.createTable('sessions', (table) => {
     table.increments('id').primary(); // Identificador primário
     table.integer('user_id').notNullable();
@@ -84,6 +94,15 @@ export async function down(knex) {
   await knex.schema.dropTableIfExists('users', () => {
     console.log('Table users dropped');
   });
+
+  await knex.schema.dropTableIfExists('password_resets', () => {
+    console.log('Table password_resets dropped');
+  });
+
+  await knex.schema.dropTableIfExists('sessions', () => {
+    console.log('Table sessions dropped');
+  });
+
   await knex.schema.dropTableIfExists('_audit_logs_change', () => {
     console.log('Table logs_change dropped');
   });
